@@ -27,14 +27,6 @@ const INSTA_POSTS = [
     type: 'carousel',
     caption: 'Another range of our handmade gift collection ✨🥰 #gifting #trending',
   },
-  {
-    id: 4,
-    url: 'https://www.instagram.com/p/DceMJAmD9vb/?img_index=1',
-    img: '/media/insta-4.jpg',
-    likes: 55,
-    type: 'carousel',
-    caption: 'She deserves more than a single chocolate 💅 #gifting #trending #handmade',
-  },
 ];
 
 export default function InstagramFeed() {
@@ -69,8 +61,8 @@ export default function InstagramFeed() {
           </a>
         </div>
 
-        {/* Instagram 4-Post Grid with Exact Thumbnails */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Instagram 3-Post Grid with Exact Thumbnails */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           {INSTA_POSTS.map((post) => (
             <a
               key={post.id}
