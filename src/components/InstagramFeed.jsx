@@ -27,6 +27,14 @@ const INSTA_POSTS = [
     type: 'carousel',
     caption: 'Another range of our handmade gift collection ✨🥰 #gifting #trending',
   },
+  {
+    id: 4,
+    url: 'https://www.instagram.com/p/DceHO9IDwAo/?img_index=1',
+    img: '/media/Image-78971.jpg',
+    likes: 88,
+    type: 'carousel',
+    caption: 'Handcrafted floral treasures & bespoke gift sets 🌸✨ #littlegiftstudio #handmade',
+  },
 ];
 
 export default function InstagramFeed() {
@@ -61,8 +69,8 @@ export default function InstagramFeed() {
           </a>
         </div>
 
-        {/* Instagram 3-Post Grid with Exact Thumbnails */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        {/* Instagram 4-Post Grid with Exact Thumbnails */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {INSTA_POSTS.map((post) => (
             <a
               key={post.id}
