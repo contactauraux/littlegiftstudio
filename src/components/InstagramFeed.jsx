@@ -1,95 +1,116 @@
 import React from 'react';
-import { Heart, MessageCircle, ExternalLink } from 'lucide-react';
+import { Heart, ExternalLink, Play, Sparkles } from 'lucide-react';
 import { InstagramIcon } from './Icons';
 
 const INSTA_POSTS = [
   {
     id: 1,
-    img: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80',
-    likes: 342,
-    caption: 'Packing today’s batch of pastel tulips 🌷✨ Which color is your favourite?',
+    url: 'https://www.instagram.com/p/DcbeRSYD2hX/?img_index=1',
+    img: '/media/insta-1.jpg',
+    likes: 70,
+    type: 'carousel',
+    caption: 'Abha abhaaa handmade collection 🔥 #bhadrachalam #rakhi #trending',
   },
   {
     id: 2,
-    img: 'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=600&q=80',
-    likes: 512,
-    caption: 'Bright sunshine smiles! 🌻 Hand-twisted chenille petals made to order.',
+    url: 'https://www.instagram.com/p/DcfKHkkT1Xs/',
+    img: '/media/insta-2.jpg',
+    likes: 821,
+    type: 'reel',
+    caption: 'Special gift hampers – ₹149 | ₹299 | ₹799 & Hair clips starting from ₹40! ✨❤️',
   },
   {
     id: 3,
-    img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80',
-    likes: 428,
-    caption: 'The deluxe celebration hamper in all its glory 🎀 Fairy lights + handwritten notes.',
+    url: 'https://www.instagram.com/p/DceMzVgD6vN/?img_index=1',
+    img: '/media/insta-3.jpg',
+    likes: 62,
+    type: 'carousel',
+    caption: 'Another range of our handmade gift collection ✨🥰 #gifting #trending',
   },
   {
     id: 4,
-    img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
-    likes: 289,
-    caption: 'New fluffy hair clips and bag charms just dropped! 🍓🌼',
+    url: 'https://www.instagram.com/p/DceMJAmD9vb/?img_index=1',
+    img: '/media/insta-4.jpg',
+    likes: 55,
+    type: 'carousel',
+    caption: 'She deserves more than a single chocolate 💅 #gifting #trending #handmade',
   },
 ];
 
 export default function InstagramFeed() {
   return (
-    <section className="py-16 bg-white border-t border-stone-200/60">
+    <section className="py-14 sm:py-16 bg-white/70 border-t border-rosebud-100/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 text-center sm:text-left">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 text-center sm:text-left">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-pink-600 bg-pink-50 px-3 py-1 rounded-full mb-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-pink-600 bg-pink-50 px-3 py-1 rounded-full mb-1.5 shadow-xs">
               <InstagramIcon className="w-3.5 h-3.5" />
-              Follow Our Journey
+              <span>Follow Our Journey</span>
             </div>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
-              @littlegiftstudio.in on Instagram
+              @little.gift.studio._ on Instagram
             </h2>
-            <p className="text-stone-500 text-xs sm:text-sm mt-1">
-              Tag us in your unboxing reels & photos to be featured!
+            <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
+              Watch our behind-the-scenes reels, unboxing videos & real craft creations!
             </p>
           </div>
 
           <a
-            href="https://instagram.com"
+            href="https://instagram.com/little.gift.studio._"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-stone-900 text-white hover:bg-stone-800 text-xs sm:text-sm font-semibold transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-stone-900 text-white hover:bg-stone-800 text-xs sm:text-sm font-semibold transition-all shadow-md hover:scale-105"
           >
             <InstagramIcon className="w-4 h-4 text-pink-400" />
-            <span>Visit Instagram Profile</span>
+            <span>Visit @little.gift.studio._</span>
             <ExternalLink className="w-3.5 h-3.5 text-stone-400" />
           </a>
         </div>
 
-        {/* Instagram Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Instagram 4-Post Grid with Exact Thumbnails */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {INSTA_POSTS.map((post) => (
             <a
               key={post.id}
-              href="https://instagram.com"
+              href={post.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative aspect-square rounded-2xl overflow-hidden bg-stone-100 block shadow-sm border border-stone-100"
+              className="group relative aspect-square rounded-3xl overflow-hidden bg-rosebud-50 block shadow-soft hover:shadow-card-hover border border-rosebud-200/80 transition-all duration-300"
             >
+              {/* Actual Post Thumbnail */}
               <img
                 src={post.img}
-                alt="Instagram post"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                alt="Little Gift Studio Instagram post"
+                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-stone-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-4 text-white">
-                <div className="flex items-center gap-3 text-xs font-semibold">
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
-                    {post.likes}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MessageCircle className="w-4 h-4" />
-                    18
+
+              {/* Type Badge (Reel / Post) */}
+              <div className="absolute top-3 right-3 z-10">
+                <span className="p-1.5 rounded-full bg-stone-900/70 backdrop-blur-md text-white flex items-center justify-center text-[10px] shadow-sm">
+                  {post.type === 'reel' ? <Play className="w-3 h-3 fill-white" /> : <Sparkles className="w-3 h-3 text-pink-300" />}
+                </span>
+              </div>
+
+              {/* Dark Hover Overlay with Post Details */}
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 sm:p-5 text-white">
+                <div className="flex items-center gap-3 text-xs font-bold">
+                  <span className="flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full">
+                    <Heart className="w-3.5 h-3.5 fill-rose-400 text-rose-400" />
+                    {post.likes} likes
                   </span>
                 </div>
-                <p className="text-[11px] line-clamp-2 text-stone-200">
-                  {post.caption}
-                </p>
+
+                <div className="space-y-1.5">
+                  <p className="text-xs line-clamp-2 text-stone-100 leading-snug">
+                    {post.caption}
+                  </p>
+                  <span className="text-[11px] text-pink-300 font-bold flex items-center gap-1 pt-1">
+                    <span>View on Instagram</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </span>
+                </div>
               </div>
             </a>
           ))}

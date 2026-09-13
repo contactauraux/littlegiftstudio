@@ -117,13 +117,22 @@ export default function Hero({ products = [], onQuickView, onAddToCart }) {
                   </p>
 
                   <div className="mt-4">
-                    <a
-                      href={banner.link}
+                    <button
+                      onClick={() => {
+                        if (onNavigate) {
+                          if (banner.link === '#customizer') {
+                            onNavigate('custom');
+                          } else {
+                            onNavigate('shop');
+                          }
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                      }}
                       className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold shadow-sm transition-transform group-hover/card:scale-105 ${banner.btnClass}`}
                     >
                       <span>{banner.cta}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </a>
+                    </button>
                   </div>
                 </div>
 

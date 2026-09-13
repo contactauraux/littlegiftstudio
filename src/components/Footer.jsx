@@ -1,8 +1,15 @@
 import React from 'react';
-import { Sparkles, Heart, MessageCircle, Mail, MapPin } from 'lucide-react';
+import { Sparkles, Heart, MessageCircle, MapPin } from 'lucide-react';
 import { InstagramIcon } from './Icons';
 
-export default function Footer() {
+export default function Footer({ onNavigate }) {
+  const handleNav = (pageId) => {
+    if (onNavigate) {
+      onNavigate(pageId);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="bg-stone-950 text-stone-300 pt-16 pb-12 border-t border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,11 +42,11 @@ export default function Footer() {
 
             <div className="pt-2 flex items-center gap-3">
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/little.gift.studio._"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-stone-900 hover:bg-stone-800 flex items-center justify-center text-pink-400 transition-colors"
-                aria-label="Instagram"
+                aria-label="Instagram @little.gift.studio._"
               >
                 <InstagramIcon className="w-4 h-4" />
               </a>
@@ -58,14 +65,49 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-3">
             <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider">
-              Explore
+              Explore Pages
             </h4>
             <ul className="space-y-2 text-xs">
-              <li><a href="#collection" className="hover:text-studio-400 transition-colors">All Products</a></li>
-              <li><a href="#collection" className="hover:text-studio-400 transition-colors">Everlasting Bouquets</a></li>
-              <li><a href="#customizer" className="hover:text-studio-400 transition-colors">Build Custom Bouquet</a></li>
-              <li><a href="#craft-video" className="hover:text-studio-400 transition-colors">Behind the Craft</a></li>
-              <li><a href="#occasions" className="hover:text-studio-400 transition-colors">Occasion Hampers</a></li>
+              <li>
+                <button
+                  onClick={() => handleNav('home')}
+                  className="hover:text-studio-400 transition-colors text-left"
+                >
+                  Home Page
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNav('shop')}
+                  className="hover:text-studio-400 transition-colors text-left"
+                >
+                  Our Collections
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNav('custom')}
+                  className="hover:text-studio-400 transition-colors text-left"
+                >
+                  Build Custom Bouquet
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNav('reviews')}
+                  className="hover:text-studio-400 transition-colors text-left"
+                >
+                  Customer Reviews
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNav('faqs')}
+                  className="hover:text-studio-400 transition-colors text-left"
+                >
+                  FAQs & Help
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -95,7 +137,14 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2">
                 <InstagramIcon className="w-4 h-4 text-pink-400 shrink-0" />
-                <span>Instagram: @littlegiftstudio.in</span>
+                <a
+                  href="https://instagram.com/little.gift.studio._"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-pink-400 transition-colors"
+                >
+                  Instagram: @little.gift.studio._
+                </a>
               </p>
               <p className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-studio-400 shrink-0" />

@@ -2,23 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { PRODUCTS } from './data/products';
 import IntroVideoScreen from './components/IntroVideoScreen';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import ProductCatalog from './components/ProductCatalog';
-import Customizer from './components/Customizer';
-import VideoShowcase from './components/VideoShowcase';
-import Occasions from './components/Occasions';
-import Reviews from './components/Reviews';
-import FAQ from './components/FAQ';
-import InstagramFeed from './components/InstagramFeed';
 import Footer from './components/Footer';
 import ProductModal from './components/ProductModal';
 import CartDrawer from './components/CartDrawer';
 import Toast from './components/Toast';
-import RevealOnScroll from './components/RevealOnScroll';
 import { MessageCircle } from 'lucide-react';
+
+// Pages
+import HomePage from './pages/HomePage';
+import ShopPage from './pages/ShopPage';
+import CustomStudioPage from './pages/CustomStudioPage';
+import ReviewsPage from './pages/ReviewsPage';
+import FaqPage from './pages/FaqPage';
+import ContactPage from './pages/ContactPage';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
+  const [currentPage, setCurrentPage] = useState('home');
   const [products] = useState(PRODUCTS);
   const [cartItems, setCartItems] = useState(() => {
     try {
@@ -31,6 +31,26 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '' });
+
+  // Sync with URL hash for back/forward browser navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (['home', 'shop', 'custom', 'contact', 'reviews', 'faqs'].includes(hash)) {
+        setCurrentPage(hash);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleNavigate = (pageId) => {
+    setCurrentPage(pageId);
+    window.location.hash = pageId;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     try {
@@ -118,103 +138,69 @@ _Please confirm availability and delivery timeline!_`;
     window.open(`https://wa.me/?text=${encoded}`, '_blank');
   };
 
-  const handleSelectOccasion = (occasionTitle) => {
-    const el = document.getElementById('collection');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-    showToast(`Showing hampers & gifts for ${occasionTitle} ✨`);
-  };
-
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-cream text-stone-800 relative">
+    <div className="min-h-screen flex flex-col font-sans bg-cream text-stone-800 relative selection:bg-rosebud-200">
       
       {/* 0. Fullscreen Entrance Video Overlay */}
       {showIntro && (
         <IntroVideoScreen onComplete={() => setShowIntro(false)} />
       )}
 
-      {/* 1. Top Navigation (Only shown after intro video finishes) */}
+      {/* 1. Top Unified Glassmorphism Navbar (Shared across all pages) */}
       {!showIntro && (
         <Navbar
           cartCount={cartCount}
           onOpenCart={() => setIsCartOpen(true)}
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
         />
       )}
 
-      {/* Main Content Area (Single Homepage) */}
+      {/* Main Content Area (Multi-page views with same navbar) */}
       <main className="flex-1 pt-24 sm:pt-28 lg:pt-32">
-        {/* 2. Hero Section */}
-        <Hero
-          products={products}
-          onQuickView={(p) => setSelectedProduct(p)}
-          onAddToCart={handleAddToCart}
-        />
-
-        {/* 3. Product Catalog & Filter */}
-        <RevealOnScroll>
-          <ProductCatalog
+        {currentPage === 'home' && (
+          <HomePage
             products={products}
             onQuickView={(p) => setSelectedProduct(p)}
             onAddToCart={handleAddToCart}
-            onDirectWhatsApp={(p) => handleDirectWhatsApp(p)}
+            onNavigate={handleNavigate}
           />
-        </RevealOnScroll>
+        )}
 
-        {/* 4. Interactive Customizer / Build-A-Bouquet */}
-        <RevealOnScroll>
-          <Customizer onAddToCart={handleAddToCart} />
-        </RevealOnScroll>
+        {currentPage === 'shop' && (
+          <ShopPage
+            products={products}
+            onQuickView={(p) => setSelectedProduct(p)}
+            onAddToCart={handleAddToCart}
+            onDirectWhatsApp={handleDirectWhatsApp}
+          />
+        )}
 
-        {/* 5. Video Showcase: Behind The Craft (intro-video.mp4) */}
-        <RevealOnScroll>
-          <VideoShowcase />
-        </RevealOnScroll>
+        {currentPage === 'custom' && (
+          <CustomStudioPage
+            onAddToCart={handleAddToCart}
+          />
+        )}
 
-        {/* 6. Occasions & Gifting Goals */}
-        <RevealOnScroll>
-          <Occasions onSelectOccasion={handleSelectOccasion} />
-        </RevealOnScroll>
+        {currentPage === 'contact' && (
+          <ContactPage />
+        )}
 
-        {/* 7. Reviews & Testimonials */}
-        <RevealOnScroll>
-          <Reviews />
-        </RevealOnScroll>
+        {currentPage === 'reviews' && (
+          <ReviewsPage />
+        )}
 
-        {/* 8. Frequently Asked Questions */}
-        <RevealOnScroll>
-          <FAQ />
-        </RevealOnScroll>
-
-        {/* 9. Instagram Feed / Social Proof */}
-        <RevealOnScroll>
-          <InstagramFeed />
-        </RevealOnScroll>
+        {currentPage === 'faqs' && (
+          <FaqPage />
+        )}
       </main>
 
-      {/* 10. Footer */}
-      <RevealOnScroll>
-        <Footer />
-      </RevealOnScroll>
+      {/* Shared Footer across all pages */}
+      <Footer onNavigate={handleNavigate} />
 
-      {/* Floating WhatsApp Quick Action Button */}
-      <a
-        href="https://wa.me/?text=Hi%20Little%20Gift%20Studio!%20I%20have%20a%20question%20about%20your%20handmade%20gifts%20%F0%9F%8C%B8"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-full shadow-2xl flex items-center gap-2 hover:scale-105 transition-all group"
-        title="Chat on WhatsApp"
-        aria-label="Chat on WhatsApp"
-      >
-        <MessageCircle className="w-6 h-6 fill-current" />
-        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap text-xs font-semibold pr-1">
-          Chat with Us
-        </span>
-      </a>
-
-      {/* Quick View Product Modal */}
+      {/* Quick View Product Modal (Shared) */}
       <ProductModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
@@ -222,7 +208,7 @@ _Please confirm availability and delivery timeline!_`;
         onDirectWhatsApp={handleDirectWhatsApp}
       />
 
-      {/* Slide-over Shopping Cart Drawer */}
+      {/* Slide-over Shopping Cart Drawer (Shared) */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
