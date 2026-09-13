@@ -36,10 +36,6 @@ export default function ProductCatalog({
         
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-rosebud-100 text-rosebud-700 text-xs font-semibold uppercase tracking-wider mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
-            Curated Handmade Collection
-          </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900">
             Handcrafted with Care & Heart
           </h2>

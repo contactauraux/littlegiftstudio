@@ -1,171 +1,293 @@
-import React from 'react';
-import { Sparkles, ArrowRight, Heart, Flower2, Gift, ShieldCheck, Play } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { HERO_BANNERS } from '../data/heroBanners';
+import { ChevronLeft, ChevronRight, ArrowRight, ShoppingBag, Eye } from 'lucide-react';
 
-export default function Hero({ onExploreClick, onCustomizerClick }) {
+export default function Hero({ products = [], onQuickView, onAddToCart }) {
+  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+  const bannerTrackRef = useRef(null);
+  const picksScrollRef = useRef(null);
+  const isHoveredRef = useRef(false);
+
+  // Automatic horizontal scrolling for the top 4 banner cards
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isHoveredRef.current || !bannerTrackRef.current) return;
+
+      const track = bannerTrackRef.current;
+      const cardWidth = track.firstElementChild ? track.firstElementChild.offsetWidth + 16 : 380;
+      const maxScrollLeft = track.scrollWidth - track.clientWidth;
+
+      if (track.scrollLeft >= maxScrollLeft - 20) {
+        // Wrap around to start
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+        setActiveBannerIndex(0);
+      } else {
+        track.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        const nextIdx = Math.min(
+          HERO_BANNERS.length - 1,
+          Math.round((track.scrollLeft + cardWidth) / cardWidth)
+        );
+        setActiveBannerIndex(nextIdx);
+      }
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleBannerScroll = () => {
+    if (!bannerTrackRef.current) return;
+    const track = bannerTrackRef.current;
+    const cardWidth = track.firstElementChild ? track.firstElementChild.offsetWidth + 16 : 380;
+    const currentIdx = Math.round(track.scrollLeft / cardWidth);
+    setActiveBannerIndex(Math.min(HERO_BANNERS.length - 1, Math.max(0, currentIdx)));
+  };
+
+  const scrollBanners = (direction) => {
+    if (!bannerTrackRef.current) return;
+    const track = bannerTrackRef.current;
+    const cardWidth = track.firstElementChild ? track.firstElementChild.offsetWidth + 16 : 380;
+    track.scrollBy({
+      left: direction === 'left' ? -cardWidth : cardWidth,
+      behavior: 'smooth',
+    });
+  };
+
+  const scrollToBannerIndex = (index) => {
+    if (!bannerTrackRef.current) return;
+    const track = bannerTrackRef.current;
+    const cardWidth = track.firstElementChild ? track.firstElementChild.offsetWidth + 16 : 380;
+    track.scrollTo({
+      left: index * cardWidth,
+      behavior: 'smooth',
+    });
+    setActiveBannerIndex(index);
+  };
+
+  const scrollPicks = (direction) => {
+    if (picksScrollRef.current) {
+      const scrollAmount = 280;
+      picksScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
-    <section id="top" className="relative overflow-hidden pt-4 pb-16 lg:pb-20 scroll-mt-32 bg-gradient-to-b from-cream via-studio-50/50 to-cream">
-      {/* Decorative Pastel Background Blobs */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-rosebud-100/40 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-40 right-5 w-80 h-80 bg-butter-100/60 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute bottom-10 left-5 w-72 h-72 bg-matcha-100/50 rounded-full blur-3xl pointer-events-none -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Hero Copy */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            
-            {/* Pill Tag */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-studio-100/90 border border-studio-200 text-studio-800 text-xs sm:text-sm font-semibold tracking-wide shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-studio-500 animate-ping" />
-              🌸 100% Handmade in Small Batches • Made to Order
-            </div>
-
-            {/* Main Headline */}
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-stone-900 leading-[1.15] font-bold tracking-tight">
-              Thoughtful Gifts &{' '}
-              <span className="relative inline-block text-studio-600">
-                Everlasting Blooms
-                <svg className="absolute -bottom-2 left-0 w-full h-3 text-studio-300 -z-10" viewBox="0 0 100 20" preserveAspectRatio="none">
-                  <path d="M0 15 Q 50 0 100 15" stroke="currentColor" strokeWidth="6" fill="transparent" strokeLinecap="round" />
-                </svg>
-              </span>{' '}
-              That Never Wilt.
-            </h1>
-
-            {/* Description */}
-            <p className="text-base sm:text-lg text-stone-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              We shape soft, colorful pipe cleaner bouquets, cute hair clips, keychains, and curated hampers designed for birthdays, anniversaries, and cozy everyday surprises.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
-              <a
-                href="#collection"
-                onClick={onExploreClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-studio-600 hover:bg-studio-700 text-white font-semibold text-base shadow-craft hover:shadow-card-hover transition-all duration-200 transform hover:-translate-y-0.5"
+    <section id="top" className="py-4 space-y-6 scroll-mt-28">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        
+        {/* 1. TOP AUTOMATIC HORIZONTAL BANNER SCROLLER (4 CARDS) */}
+        <div
+          className="relative group"
+          onMouseEnter={() => { isHoveredRef.current = true; }}
+          onMouseLeave={() => { isHoveredRef.current = false; }}
+        >
+          {/* Horizontal Scrolling Track */}
+          <div
+            ref={bannerTrackRef}
+            onScroll={handleBannerScroll}
+            className="flex items-stretch gap-4 overflow-x-auto pb-2 scroll-smooth no-scrollbar snap-x snap-mandatory"
+          >
+            {HERO_BANNERS.map((banner, idx) => (
+              <div
+                key={banner.id}
+                className={`w-[85vw] sm:w-[420px] md:w-[460px] lg:w-[480px] shrink-0 snap-start relative rounded-3xl p-5 sm:p-6 border shadow-soft flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-card-hover group/card ${
+                  banner.bgClass
+                }`}
               >
-                <span>Explore Collection</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
+                {/* Top Badge & Text */}
+                <div className="z-10 max-w-[62%]">
+                  {banner.badge && (
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/90 text-stone-800 text-[11px] font-bold shadow-xs mb-2">
+                      {banner.badge}
+                    </span>
+                  )}
 
-              <a
-                href="#customizer"
-                onClick={onCustomizerClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-studio-50 text-studio-800 font-semibold text-base border border-studio-200 shadow-sm transition-all"
-              >
-                <Sparkles className="w-4 h-4 text-studio-500" />
-                <span>Build Your Bouquet</span>
-              </a>
-            </div>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900 leading-tight">
+                    {banner.title}
+                  </h3>
 
-            {/* Trust Highlights */}
-            <div className="pt-6 border-t border-stone-200/60 grid grid-cols-3 gap-3 text-left">
-              <div className="flex items-start gap-2">
-                <Flower2 className="w-4 h-4 text-studio-500 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-stone-800">Never Wilts</h4>
-                  <p className="text-[11px] text-stone-500">Forever vibrant keepsakes</p>
+                  <div className="text-xl sm:text-2xl font-extrabold text-stone-900 mt-1.5 tracking-tight">
+                    {banner.highlight}
+                  </div>
+
+                  <p className="text-stone-600 text-xs mt-1 line-clamp-2">
+                    {banner.subtitle}
+                  </p>
+
+                  <div className="mt-4">
+                    <a
+                      href={banner.link}
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold shadow-sm transition-transform group-hover/card:scale-105 ${banner.btnClass}`}
+                    >
+                      <span>{banner.cta}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Product Image Showcase on Right */}
+                <div className="absolute -bottom-2 -right-3 w-36 sm:w-44 h-36 sm:h-44 rounded-2xl overflow-hidden shadow-md transform rotate-2 group-hover/card:rotate-0 group-hover/card:scale-105 transition-all duration-300">
+                  <img
+                    src={banner.image}
+                    alt={banner.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
-              <div className="flex items-start gap-2">
-                <Gift className="w-4 h-4 text-rosebud-500 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-stone-800">Custom Colors</h4>
-                  <p className="text-[11px] text-stone-500">Tailored to your theme</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-stone-800">Safe Packing</h4>
-                  <p className="text-[11px] text-stone-500">Sturdy rigid box delivery</p>
-                </div>
-              </div>
-            </div>
-
+            ))}
           </div>
 
-          {/* Right Hero Visual Showcase */}
-          <div className="lg:col-span-5 relative">
-            {/* Main Showcase Card */}
-            <div className="relative mx-auto max-w-md bg-white p-4 sm:p-5 rounded-3xl shadow-soft border border-studio-100 transform hover:rotate-1 transition-transform duration-300">
-              
-              {/* Top Tape Effect */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-butter-200/90 text-amber-900 text-[11px] font-cursive font-bold rounded shadow-sm rotate-[-2deg]">
-                ✨ Hand-twisted with love
-              </div>
+          {/* Navigation Arrows on Hover */}
+          <button
+            onClick={() => scrollBanners('left')}
+            aria-label="Scroll banners left"
+            className="absolute -left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/95 border border-stone-200 shadow-md flex items-center justify-center text-stone-800 hover:bg-white transition-opacity opacity-0 group-hover:opacity-100 z-20"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => scrollBanners('right')}
+            aria-label="Scroll banners right"
+            className="absolute -right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/95 border border-stone-200 shadow-md flex items-center justify-center text-stone-800 hover:bg-white transition-opacity opacity-0 group-hover:opacity-100 z-20"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
 
-              {/* Main Image Banner */}
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/4.2] bg-studio-100">
-                <img
-                  src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=900&q=80"
-                  alt="Little Gift Studio Handmade Bouquets"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent" />
-                
-                {/* Overlay Text Inside Image */}
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-studio-600/90 text-[11px] font-semibold mb-1">
-                    Featured Bouquet
-                  </span>
-                  <h3 className="font-serif text-lg font-bold">Pastel Tulip Garden Bundle</h3>
-                  <p className="text-xs text-stone-200">5 stems • Korean matte wrap • Free gift note</p>
-                </div>
+          {/* Pagination Indicators (Round Dots) */}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            {HERO_BANNERS.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => scrollToBannerIndex(idx)}
+                aria-label={`Go to banner slide ${idx + 1}`}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  activeBannerIndex === idx
+                    ? 'bg-studio-600 ring-2 ring-studio-300 scale-110'
+                    : 'bg-stone-300 hover:bg-stone-400'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
 
-                {/* Video Preview Anchor */}
-                <a
-                  href="#craft-video"
-                  className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-studio-700 hover:text-studio-900 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-md hover:scale-105 transition-transform"
+
+        {/* 2. BOTTOM QUICK PICKS / DEALS HORIZONTAL SHELF */}
+        <div className="bg-gradient-to-r from-studio-50/80 via-white to-rosebud-50/60 p-4 sm:p-6 rounded-3xl border border-studio-100 shadow-sm relative">
+          
+          {/* Header with Title and Scroll Arrows */}
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="font-serif text-lg sm:text-2xl font-bold text-stone-900 flex items-center gap-2">
+                🌸 Grab your favorite handmade picks!
+              </h2>
+              <p className="text-xs text-stone-500 mt-0.5">
+                Popular everlasting floral stems, hampers & accessories made to order
+              </p>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => scrollPicks('left')}
+                aria-label="Scroll picks left"
+                className="w-8 h-8 rounded-full bg-white border border-stone-200 text-stone-700 hover:bg-studio-50 flex items-center justify-center shadow-xs transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => scrollPicks('right')}
+                aria-label="Scroll picks right"
+                className="w-8 h-8 rounded-full bg-white border border-stone-200 text-stone-700 hover:bg-studio-50 flex items-center justify-center shadow-xs transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Horizontal Scrolling Card Track */}
+          <div
+            ref={picksScrollRef}
+            className="flex items-stretch gap-4 overflow-x-auto pb-2 scroll-smooth no-scrollbar"
+          >
+            {products.map((item) => {
+              const discountPercent = item.originalPrice
+                ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)
+                : null;
+
+              return (
+                <div
+                  key={item.id}
+                  className="w-48 sm:w-56 shrink-0 bg-white rounded-2xl border border-stone-200/80 p-3 flex flex-col justify-between hover:shadow-card-hover hover:border-studio-300 transition-all duration-200 group"
                 >
-                  <Play className="w-3 h-3 fill-studio-600 text-studio-600" />
-                  Watch Craft Reel
-                </a>
-              </div>
+                  {/* Image with discount badge */}
+                  <div className="relative aspect-square rounded-xl overflow-hidden bg-studio-50 mb-2.5">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
 
-              {/* Bottom Quick Feature Tag Bar */}
-              <div className="mt-4 flex items-center justify-between px-2 pt-2 border-t border-stone-100">
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-1.5">
-                    <span className="w-6 h-6 rounded-full bg-rosebud-200 border-2 border-white flex items-center justify-center text-[10px]">🌸</span>
-                    <span className="w-6 h-6 rounded-full bg-lavender-200 border-2 border-white flex items-center justify-center text-[10px]">🌷</span>
-                    <span className="w-6 h-6 rounded-full bg-butter-200 border-2 border-white flex items-center justify-center text-[10px]">🌻</span>
+                    {discountPercent && (
+                      <span className="absolute top-2 left-2 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-xs">
+                        ↓{discountPercent}%
+                      </span>
+                    )}
+
+                    <button
+                      onClick={() => onQuickView && onQuickView(item)}
+                      aria-label="Quick view product"
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 text-stone-700 hover:bg-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <span className="text-xs text-stone-600 font-medium">350+ Custom Orders</span>
+
+                  {/* Info */}
+                  <div>
+                    <span className="text-[10px] text-studio-600 font-bold uppercase tracking-wider block">
+                      {item.categoryLabel}
+                    </span>
+                    <h4
+                      onClick={() => onQuickView && onQuickView(item)}
+                      className="font-serif text-xs sm:text-sm font-bold text-stone-900 truncate hover:text-studio-600 cursor-pointer mt-0.5"
+                    >
+                      {item.name}
+                    </h4>
+                  </div>
+
+                  {/* Price & Add button */}
+                  <div className="mt-3 pt-2 border-t border-stone-100 flex items-center justify-between">
+                    <div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="font-extrabold text-sm sm:text-base text-stone-900">
+                          ₹{item.price}
+                        </span>
+                        {item.originalPrice && (
+                          <span className="text-[10px] text-stone-400 line-through">
+                            ₹{item.originalPrice}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => onAddToCart && onAddToCart(item)}
+                      aria-label="Add product to cart"
+                      className="p-1.5 rounded-lg bg-studio-600 hover:bg-studio-700 text-white shadow-xs transition-colors"
+                      title="Add to Hamper"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
                 </div>
-                <div className="flex items-center text-amber-500 text-xs font-bold gap-1">
-                  <span>★ 4.9</span>
-                  <span className="text-stone-400 font-normal">(180+ reviews)</span>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Floating Cute Floating Badges */}
-            <div className="absolute -bottom-5 -left-4 sm:-left-6 bg-white/95 backdrop-blur-sm px-4 py-2.5 rounded-2xl shadow-lg border border-studio-100 flex items-center gap-3 animate-float-slow">
-              <div className="w-9 h-9 rounded-xl bg-rosebud-100 flex items-center justify-center text-lg">
-                💐
-              </div>
-              <div>
-                <p className="text-xs font-bold text-stone-900">Zero Wilting Ever</p>
-                <p className="text-[10px] text-stone-500">Cherish it for years</p>
-              </div>
-            </div>
-
-            <div className="hidden sm:flex absolute -top-4 -right-4 bg-white/95 backdrop-blur-sm px-4 py-2.5 rounded-2xl shadow-lg border border-studio-100 items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-butter-100 flex items-center justify-center text-lg">
-                💌
-              </div>
-              <div>
-                <p className="text-xs font-bold text-stone-900">Handwritten Note</p>
-                <p className="text-[10px] text-stone-500">Free with every gift</p>
-              </div>
-            </div>
-
+              );
+            })}
           </div>
 
         </div>
+
       </div>
     </section>
   );

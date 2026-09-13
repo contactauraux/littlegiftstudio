@@ -3,12 +3,10 @@ import { PRODUCTS } from './data/products';
 import IntroVideoScreen from './components/IntroVideoScreen';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import Features from './components/Features';
 import ProductCatalog from './components/ProductCatalog';
 import Customizer from './components/Customizer';
 import VideoShowcase from './components/VideoShowcase';
 import Occasions from './components/Occasions';
-import HowItWorks from './components/HowItWorks';
 import Reviews from './components/Reviews';
 import FAQ from './components/FAQ';
 import InstagramFeed from './components/InstagramFeed';
@@ -16,6 +14,7 @@ import Footer from './components/Footer';
 import ProductModal from './components/ProductModal';
 import CartDrawer from './components/CartDrawer';
 import Toast from './components/Toast';
+import RevealOnScroll from './components/RevealOnScroll';
 import { MessageCircle } from 'lucide-react';
 
 export default function App() {
@@ -149,45 +148,56 @@ _Please confirm availability and delivery timeline!_`;
       <main className="flex-1 pt-24 sm:pt-28 lg:pt-32">
         {/* 2. Hero Section */}
         <Hero
-          onExploreClick={() => {}}
-          onCustomizerClick={() => {}}
-        />
-
-        {/* 3. Craft Value Props / Features */}
-        <Features />
-
-        {/* 4. Product Catalog & Filter */}
-        <ProductCatalog
           products={products}
           onQuickView={(p) => setSelectedProduct(p)}
           onAddToCart={handleAddToCart}
-          onDirectWhatsApp={(p) => handleDirectWhatsApp(p)}
         />
 
-        {/* 5. Interactive Customizer / Build-A-Bouquet */}
-        <Customizer onAddToCart={handleAddToCart} />
+        {/* 3. Product Catalog & Filter */}
+        <RevealOnScroll>
+          <ProductCatalog
+            products={products}
+            onQuickView={(p) => setSelectedProduct(p)}
+            onAddToCart={handleAddToCart}
+            onDirectWhatsApp={(p) => handleDirectWhatsApp(p)}
+          />
+        </RevealOnScroll>
 
-        {/* 6. Video Showcase: Behind The Craft (intro-video.mp4) */}
-        <VideoShowcase />
+        {/* 4. Interactive Customizer / Build-A-Bouquet */}
+        <RevealOnScroll>
+          <Customizer onAddToCart={handleAddToCart} />
+        </RevealOnScroll>
 
-        {/* 7. Occasions & Gifting Goals */}
-        <Occasions onSelectOccasion={handleSelectOccasion} />
+        {/* 5. Video Showcase: Behind The Craft (intro-video.mp4) */}
+        <RevealOnScroll>
+          <VideoShowcase />
+        </RevealOnScroll>
 
-        {/* 8. How It Works */}
-        <HowItWorks />
+        {/* 6. Occasions & Gifting Goals */}
+        <RevealOnScroll>
+          <Occasions onSelectOccasion={handleSelectOccasion} />
+        </RevealOnScroll>
 
-        {/* 9. Reviews & Testimonials */}
-        <Reviews />
+        {/* 7. Reviews & Testimonials */}
+        <RevealOnScroll>
+          <Reviews />
+        </RevealOnScroll>
 
-        {/* 10. Frequently Asked Questions */}
-        <FAQ />
+        {/* 8. Frequently Asked Questions */}
+        <RevealOnScroll>
+          <FAQ />
+        </RevealOnScroll>
 
-        {/* 11. Instagram Feed / Social Proof */}
-        <InstagramFeed />
+        {/* 9. Instagram Feed / Social Proof */}
+        <RevealOnScroll>
+          <InstagramFeed />
+        </RevealOnScroll>
       </main>
 
-      {/* 12. Footer */}
-      <Footer />
+      {/* 10. Footer */}
+      <RevealOnScroll>
+        <Footer />
+      </RevealOnScroll>
 
       {/* Floating WhatsApp Quick Action Button */}
       <a
