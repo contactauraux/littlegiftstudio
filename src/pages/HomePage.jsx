@@ -1,5 +1,6 @@
 import React from 'react';
 import Hero from '../components/Hero';
+import NewArrivalsCarousel from '../components/NewArrivalsCarousel';
 import CategoryVisualGrid from '../components/CategoryVisualGrid';
 import ShopByBudget from '../components/ShopByBudget';
 import CustomizerPromoBanner from '../components/CustomizerPromoBanner';
@@ -20,7 +21,16 @@ export default function HomePage({ products, onQuickView, onAddToCart, onNavigat
         onNavigate={onNavigate}
       />
 
-      {/* 2. Visual Category Tiles Grid */}
+      {/* 2. New Arrivals Everlasting Stems Carousel (7 Stems & Bouquets) */}
+      <RevealOnScroll>
+        <NewArrivalsCarousel
+          onQuickView={onQuickView}
+          onAddToCart={onAddToCart}
+          onNavigate={onNavigate}
+        />
+      </RevealOnScroll>
+
+      {/* 3. Visual Category Tiles Grid */}
       <RevealOnScroll>
         <CategoryVisualGrid onNavigate={onNavigate} />
       </RevealOnScroll>
