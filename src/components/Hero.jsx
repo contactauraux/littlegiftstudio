@@ -3,7 +3,7 @@ import { Sparkles, ArrowRight, Heart, Flower2, Gift, ShieldCheck, Play } from 'l
 
 export default function Hero({ onExploreClick, onCustomizerClick }) {
   return (
-    <section className="relative overflow-hidden pt-6 pb-16 lg:py-20 bg-gradient-to-b from-cream via-studio-50/50 to-cream">
+    <section id="top" className="relative overflow-hidden pt-4 pb-16 lg:pb-20 scroll-mt-32 bg-gradient-to-b from-cream via-studio-50/50 to-cream">
       {/* Decorative Pastel Background Blobs */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-rosebud-100/40 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute top-40 right-5 w-80 h-80 bg-butter-100/60 rounded-full blur-3xl pointer-events-none -z-10" />

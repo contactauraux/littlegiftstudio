@@ -120,7 +120,7 @@ _Please confirm availability, custom color details, and delivery date!_`;
   };
 
   return (
-    <section id="customizer" className="py-16 sm:py-20 bg-gradient-to-b from-cream via-studio-50 to-cream relative">
+    <section id="customizer" className="py-16 sm:py-20 bg-gradient-to-b from-cream via-studio-50 to-cream relative scroll-mt-28 sm:scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}

@@ -10,7 +10,7 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faqs" className="py-16 sm:py-20 bg-cream border-t border-stone-200/60">
+    <section id="faqs" className="py-16 sm:py-20 bg-cream border-t border-stone-200/60 scroll-mt-28 sm:scroll-mt-32">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center mb-12">

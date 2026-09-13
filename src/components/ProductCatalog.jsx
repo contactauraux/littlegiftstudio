@@ -31,7 +31,7 @@ export default function ProductCatalog({
     });
 
   return (
-    <section id="collection" className="py-16 sm:py-20 bg-cream relative">
+    <section id="collection" className="py-16 sm:py-20 bg-cream relative scroll-mt-28 sm:scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}

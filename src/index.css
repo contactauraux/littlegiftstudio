@@ -57,3 +57,99 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   z-index: 10;
 }
+
+/* Floating Glassmorphism Animations & Micro-Interactions */
+@keyframes heartFloat1 {
+  0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 0; }
+  35% { opacity: 0.95; }
+  100% { transform: translate(-16px, -36px) scale(1.05) rotate(-20deg); opacity: 0; }
+}
+
+@keyframes heartFloat2 {
+  0% { transform: translate(0, 0) scale(0.4) rotate(0deg); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translate(18px, -40px) scale(1.15) rotate(25deg); opacity: 0; }
+}
+
+@keyframes flowerFloat1 {
+  0% { transform: translate(0, 0) scale(0.4) rotate(0deg); opacity: 0; }
+  40% { opacity: 0.9; }
+  100% { transform: translate(-24px, -30px) scale(1) rotate(-50deg); opacity: 0; }
+}
+
+@keyframes flowerFloat2 {
+  0% { transform: translate(0, 0) scale(0.45) rotate(0deg); opacity: 0; }
+  40% { opacity: 0.95; }
+  100% { transform: translate(22px, -32px) scale(1.05) rotate(65deg); opacity: 0; }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(5deg); }
+}
+
+@keyframes haloPulse {
+  0%, 100% { transform: scale(1); opacity: 0.65; filter: blur(8px); }
+  50% { transform: scale(1.15); opacity: 0.95; filter: blur(12px); }
+}
+
+@keyframes strokeDraw {
+  0% { stroke-dashoffset: 120; opacity: 0.4; }
+  50% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes glassSheen {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(200%) rotate(25deg); }
+}
+
+.animate-heart-1 {
+  animation: heartFloat1 1.7s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+}
+.animate-heart-2 {
+  animation: heartFloat2 1.9s cubic-bezier(0.2, 0.8, 0.4, 1) infinite 0.25s;
+}
+.animate-flower-1 {
+  animation: flowerFloat1 1.8s cubic-bezier(0.2, 0.8, 0.4, 1) infinite 0.15s;
+}
+.animate-flower-2 {
+  animation: flowerFloat2 2.1s cubic-bezier(0.2, 0.8, 0.4, 1) infinite 0.35s;
+}
+
+.animate-float-gentle {
+  animation: floatGentle 3.2s ease-in-out infinite;
+}
+
+.animate-halo-pulse {
+  animation: haloPulse 3.5s ease-in-out infinite;
+}
+
+.stroke-draw-path {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: strokeDraw 2.4s ease-out forwards infinite;
+}
+
+.glass-sheen-effect {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 48%,
+    rgba(255, 240, 245, 0.5) 50%,
+    rgba(255, 255, 255, 0.35) 52%,
+    transparent 60%
+  );
+  transform: translateX(-100%) rotate(25deg);
+  pointer-events: none;
+}
+
+.group:hover .glass-sheen-effect {
+  animation: glassSheen 1.2s ease-in-out;
+}
+

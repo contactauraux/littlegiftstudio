@@ -137,14 +137,16 @@ _Please confirm availability and delivery timeline!_`;
         <IntroVideoScreen onComplete={() => setShowIntro(false)} />
       )}
 
-      {/* 1. Top Navigation */}
-      <Navbar
-        cartCount={cartCount}
-        onOpenCart={() => setIsCartOpen(true)}
-      />
+      {/* 1. Top Navigation (Only shown after intro video finishes) */}
+      {!showIntro && (
+        <Navbar
+          cartCount={cartCount}
+          onOpenCart={() => setIsCartOpen(true)}
+        />
+      )}
 
       {/* Main Content Area (Single Homepage) */}
-      <main className="flex-1">
+      <main className="flex-1 pt-24 sm:pt-28 lg:pt-32">
         {/* 2. Hero Section */}
         <Hero
           onExploreClick={() => {}}

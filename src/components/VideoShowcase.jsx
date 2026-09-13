@@ -25,7 +25,7 @@ export default function VideoShowcase() {
   };
 
   return (
-    <section id="craft-video" className="py-16 sm:py-24 bg-stone-900 text-stone-100 relative overflow-hidden">
+    <section id="craft-video" className="py-16 sm:py-24 bg-stone-900 text-stone-100 relative overflow-hidden scroll-mt-28 sm:scroll-mt-32">
       
       {/* Background Ambience Glow */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-studio-600/20 rounded-full blur-3xl pointer-events-none" />
