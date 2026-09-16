@@ -64,8 +64,28 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const handleNavigate = (pageId) => {
+  const [shopFilter, setShopFilter] = useState({ category: 'all', budget: 'all' });
+
+  const handleNavigate = (pageId, filterOptions = null) => {
     setCurrentPage(pageId);
+    if (pageId === 'shop') {
+      if (filterOptions) {
+        if (typeof filterOptions === 'string') {
+          if (filterOptions.startsWith('under-') || filterOptions === 'luxury' || filterOptions === 'luxury-hampers') {
+            setShopFilter({ category: 'all', budget: filterOptions });
+          } else {
+            setShopFilter({ category: filterOptions, budget: 'all' });
+          }
+        } else if (typeof filterOptions === 'object') {
+          setShopFilter({
+            category: filterOptions.category || 'all',
+            budget: filterOptions.budget || 'all',
+          });
+        }
+      } else {
+        setShopFilter({ category: 'all', budget: 'all' });
+      }
+    }
     window.location.hash = pageId;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -192,12 +212,14 @@ export default function App() {
             onQuickView={(p) => setSelectedProduct(p)}
             onAddToCart={handleAddToCart}
             onDirectInstagramOrder={handleDirectInstagramOrder}
+            initialFilter={shopFilter}
           />
         )}
 
         {currentPage === 'custom' && (
           <CustomStudioPage
             onAddToCart={handleAddToCart}
+            onNavigate={setCurrentPage}
           />
         )}
 

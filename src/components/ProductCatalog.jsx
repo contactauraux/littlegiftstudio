@@ -1,27 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CATEGORIES } from '../data/products';
 import ProductCard from './ProductCard';
 import { Search, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { getStoredBudgetTiers } from '../lib/curationStore';
 
 export default function ProductCatalog({
   products,
   onQuickView,
   onAddToCart,
   onDirectInstagramOrder,
+  initialCategory = 'all',
+  initialBudget = 'all',
 }) {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState(initialCategory || 'all');
+  const [activeBudget, setActiveBudget] = useState(initialBudget || 'all');
+  const [budgetTiers, setBudgetTiers] = useState(getStoredBudgetTiers());
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
+
+  useEffect(() => {
+    if (initialCategory) {
+      setActiveCategory(initialCategory);
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialBudget) {
+      setActiveBudget(initialBudget);
+    }
+  }, [initialBudget]);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setBudgetTiers(getStoredBudgetTiers());
+    };
+    window.addEventListener('lgs_budget_tiers_updated', handleUpdate);
+    return () => window.removeEventListener('lgs_budget_tiers_updated', handleUpdate);
+  }, []);
+
+  const matchesBudgetFilter = (product) => {
+    if (!activeBudget || activeBudget === 'all') return true;
+    const tier = budgetTiers.find((b) => b.id === activeBudget);
+    if (tier) {
+      if (tier.id === 'under-1499' || tier.id === 'luxury' || tier.id === 'luxury-hampers') {
+        return product.price >= (tier.minPrice || 800) || product.category === 'hampers';
+      }
+      return product.price <= tier.maxPrice;
+    }
+    return true;
+  };
 
   const filteredProducts = products
     .filter((product) => {
       const matchesCategory =
         activeCategory === 'all' || product.category === activeCategory;
+      const matchesBudget = matchesBudgetFilter(product);
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (product.categoryLabel && product.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesCategory && matchesSearch;
+      return matchesCategory && matchesBudget && matchesSearch;
     })
     .sort((a, b) => {
       if (sortBy === 'price-low') return a.price - b.price;
@@ -36,6 +74,10 @@ export default function ProductCatalog({
         
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-butter-100/90 text-amber-900 text-xs font-bold uppercase tracking-wider mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+            Handcrafted Catalog
+          </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900">
             Handcrafted with Care & Heart
           </h2>
@@ -54,8 +96,11 @@ export default function ProductCatalog({
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 shadow-sm ${
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    setActiveBudget('all');
+                  }}
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 shadow-xs ${
                     isActive
                       ? 'bg-studio-600 text-white shadow-craft scale-105'
                       : 'bg-white text-stone-700 hover:bg-studio-50 border border-stone-200/80'
@@ -103,12 +148,22 @@ export default function ProductCatalog({
 
         {/* Product Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8">
-            <Sparkles className="w-10 h-10 text-studio-400 mx-auto mb-3 animate-pulse" />
-            <h3 className="font-serif text-xl font-bold text-stone-800">No matching creations found</h3>
-            <p className="text-stone-500 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
-              Try searching with another keyword or pick a different category above.
+          <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-3">
+            <Sparkles className="w-10 h-10 text-studio-400 mx-auto animate-pulse" />
+            <h3 className="font-serif text-xl font-bold text-stone-800">No creations found in this budget</h3>
+            <p className="text-stone-500 text-xs sm:text-sm max-w-sm mx-auto">
+              We couldn't find items matching your current budget or search criteria.
             </p>
+            <button
+              onClick={() => {
+                setActiveBudget('all');
+                setActiveCategory('all');
+                setSearchQuery('');
+              }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-studio-600 hover:bg-studio-700 text-white text-xs font-semibold shadow-xs transition-colors mt-2"
+            >
+              <span>View All Catalog Items</span>
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

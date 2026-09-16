@@ -16,14 +16,20 @@ import {
 import {
   getStoredInstagramPosts, addInstagramPost, updateInstagramPost, deleteInstagramPost, resetInstagramPostsToDefault
 } from '../lib/instagramStore';
+import {
+  getStoredCategoryTiles, updateCategoryTile, resetCategoryTilesToDefault,
+  getStoredBudgetTiers, updateBudgetTier, resetBudgetTiersToDefault
+} from '../lib/curationStore';
 import { logoutAdmin } from './adminAuth';
 import ProductFormModal from './ProductFormModal';
 import ReviewFormModal from './ReviewFormModal';
 import FaqFormModal from './FaqFormModal';
 import BannerFormModal from './BannerFormModal';
 import InstagramPostFormModal from './InstagramPostFormModal';
+import CategoryTileModal from './CategoryTileModal';
+import BudgetTierModal from './BudgetTierModal';
 import { InstagramIcon } from '../components/Icons';
-import { Play, Heart } from 'lucide-react';
+import { Play, Heart, Tag, DollarSign } from 'lucide-react';
 
 export default function AdminDashboard({ session, onLogout, onNavigateToStore }) {
   // Navigation tabs: 'products' | 'banners' | 'reviews' | 'faqs' | 'instagram'
@@ -35,6 +41,8 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
   const [reviews, setReviews] = useState([]);
   const [faqs, setFaqs] = useState([]);
   const [instagramPosts, setInstagramPosts] = useState([]);
+  const [categoryTiles, setCategoryTiles] = useState([]);
+  const [budgetTiers, setBudgetTiers] = useState([]);
 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,6 +65,12 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
   const [isInstagramModalOpen, setIsInstagramModalOpen] = useState(false);
   const [editingInstagramPost, setEditingInstagramPost] = useState(null);
 
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [editingCategoryTile, setEditingCategoryTile] = useState(null);
+
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [editingBudgetTier, setEditingBudgetTier] = useState(null);
+
   const [deleteModal, setDeleteModal] = useState({ open: false, type: '', id: null, title: '' });
   const [toastMessage, setToastMessage] = useState('');
 
@@ -66,6 +80,8 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
     setReviews(getStoredReviews());
     setFaqs(getStoredFaqs());
     setInstagramPosts(getStoredInstagramPosts());
+    setCategoryTiles(getStoredCategoryTiles());
+    setBudgetTiers(getStoredBudgetTiers());
   };
 
   useEffect(() => {
@@ -147,6 +163,24 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
     setEditingInstagramPost(null);
   };
 
+  // ================= CATEGORY TILES ACTIONS =================
+  const handleSaveCategoryTile = (tileData) => {
+    updateCategoryTile(tileData.id, tileData);
+    triggerToast(`Updated category card "${tileData.title}"! 🌸`);
+    setCategoryTiles(getStoredCategoryTiles());
+    setIsCategoryModalOpen(false);
+    setEditingCategoryTile(null);
+  };
+
+  // ================= BUDGET TIERS ACTIONS =================
+  const handleSaveBudgetTier = (tierData) => {
+    updateBudgetTier(tierData.id, tierData);
+    triggerToast(`Updated budget tier "${tierData.title}" (Max: ₹${tierData.maxPrice})! 💰`);
+    setBudgetTiers(getStoredBudgetTiers());
+    setIsBudgetModalOpen(false);
+    setEditingBudgetTier(null);
+  };
+
   // ================= GENERIC DELETE =================
   const confirmDelete = () => {
     if (!deleteModal.id) return;
@@ -207,6 +241,14 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
         resetInstagramPostsToDefault();
         setInstagramPosts(getStoredInstagramPosts());
         triggerToast('Instagram feed reset to defaults.');
+      }
+    } else if (activeTab === 'curation') {
+      if (window.confirm('Reset category tiles and budget tiers back to store defaults?')) {
+        resetCategoryTilesToDefault();
+        resetBudgetTiersToDefault();
+        setCategoryTiles(getStoredCategoryTiles());
+        setBudgetTiers(getStoredBudgetTiers());
+        triggerToast('Categories and budget tiers reset to defaults.');
       }
     }
   };
@@ -318,7 +360,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
             onClick={() => { setActiveTab('products'); setSearchQuery(''); }}
             className={`px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shrink-0 ${
               activeTab === 'products'
-                ? 'bg-studio-600 text-white shadow-md shadow-studio-600/20'
+                ? 'bg-gradient-to-r from-studio-600 via-rose-500 to-rosebud-600 text-white shadow-md shadow-studio-600/20'
                 : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
             }`}
           >
@@ -330,7 +372,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
             onClick={() => { setActiveTab('banners'); setSearchQuery(''); }}
             className={`px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shrink-0 ${
               activeTab === 'banners'
-                ? 'bg-rosebud-600 text-white shadow-md shadow-rosebud-600/20'
+                ? 'bg-gradient-to-r from-rose-500 via-rosebud-500 to-amber-500 text-white shadow-md shadow-rosebud-500/20'
                 : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
             }`}
           >
@@ -342,7 +384,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
             onClick={() => { setActiveTab('reviews'); setSearchQuery(''); }}
             className={`px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shrink-0 ${
               activeTab === 'reviews'
-                ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20'
+                ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white shadow-md shadow-amber-500/20'
                 : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
             }`}
           >
@@ -354,7 +396,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
             onClick={() => { setActiveTab('faqs'); setSearchQuery(''); }}
             className={`px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shrink-0 ${
               activeTab === 'faqs'
-                ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
+                ? 'bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 text-white shadow-md shadow-sky-500/20'
                 : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
             }`}
           >
@@ -372,6 +414,18 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
           >
             <InstagramIcon className="w-4 h-4 text-pink-500 group-hover:text-pink-600" />
             <span>Instagram Feed & Reels ({instagramPosts.length})</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('curation'); setSearchQuery(''); }}
+            className={`px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shrink-0 ${
+              activeTab === 'curation'
+                ? 'bg-gradient-to-r from-amber-500 via-rose-500 to-studio-600 text-white shadow-md shadow-rose-500/20'
+                : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
+            }`}
+          >
+            <Tag className="w-4 h-4" />
+            <span>Categories & Budget Pricing ({categoryTiles.length + budgetTiers.length})</span>
           </button>
         </div>
 
@@ -482,7 +536,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
 
                 <button
                   onClick={() => { setEditingProduct(null); setIsProductModalOpen(true); }}
-                  className="px-4 py-2.5 rounded-xl bg-studio-600 hover:bg-studio-700 text-white text-xs sm:text-sm font-semibold shadow-md shadow-studio-600/20 flex items-center gap-2 transition-all shrink-0"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-studio-600 via-rose-500 to-rosebud-600 hover:opacity-95 text-white text-xs sm:text-sm font-semibold shadow-md shadow-studio-600/20 flex items-center gap-2 transition-all shrink-0 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add New Product</span>
@@ -641,7 +695,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
                 </button>
                 <button
                   onClick={() => { setEditingBanner(null); setIsBannerModalOpen(true); }}
-                  className="px-4 py-2.5 rounded-xl bg-rosebud-600 hover:bg-rosebud-700 text-white text-xs sm:text-sm font-semibold shadow-md shadow-rosebud-600/20 flex items-center gap-2 transition-all shrink-0"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 via-rosebud-500 to-amber-500 hover:opacity-95 text-white text-xs sm:text-sm font-semibold shadow-md shadow-rosebud-500/20 flex items-center gap-2 transition-all shrink-0 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add New Carousel Banner</span>
@@ -738,7 +792,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
                 </button>
                 <button
                   onClick={() => { setEditingReview(null); setIsReviewModalOpen(true); }}
-                  className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold shadow-md shadow-amber-600/20 flex items-center gap-2 transition-all shrink-0"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:opacity-95 text-white text-xs sm:text-sm font-semibold shadow-md shadow-amber-500/20 flex items-center gap-2 transition-all shrink-0 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add New Review</span>
@@ -823,7 +877,7 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
                 </button>
                 <button
                   onClick={() => { setEditingFaq(null); setIsFaqModalOpen(true); }}
-                  className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-md shadow-sky-600/20 flex items-center gap-2 transition-all shrink-0"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 hover:opacity-95 text-white text-xs sm:text-sm font-semibold shadow-md shadow-sky-500/20 flex items-center gap-2 transition-all shrink-0 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add New FAQ</span>
@@ -1037,7 +1091,181 @@ export default function AdminDashboard({ session, onLogout, onNavigateToStore })
           </>
         )}
 
+        {/* ======================= TAB 6: CATEGORIES & BUDGET TIERS ======================= */}
+        {activeTab === 'curation' && (
+          <>
+            {/* Header controls & reset */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-stone-200/80 shadow-sm">
+              <div>
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-stone-900 flex items-center gap-2">
+                  <Tag className="w-5 h-5 text-amber-600" />
+                  <span>Shop by Category & Gifting Budget Management</span>
+                </h3>
+                <p className="text-xs text-stone-500 mt-0.5">
+                  Configure visual category cards and decide price ceilings for the gifting budget tiers
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleResetCurrent}
+                  className="px-3.5 py-2 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-600 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  title="Reset to store defaults"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-stone-500" />
+                  <span>Reset to Defaults</span>
+                </button>
+              </div>
+            </div>
+
+            {/* SECTION 1: Shop by Category Cards */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-serif text-base font-bold text-stone-900 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-rose-600" />
+                    <span>Shop by Category Tiles (Home Page Visual Grid)</span>
+                  </h4>
+                  <p className="text-xs text-stone-500">
+                    4 featured collection cards shown on the home page with images, titles, and links
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {categoryTiles.map((tile) => (
+                  <div
+                    key={tile.id}
+                    className="p-4 rounded-3xl bg-white border border-stone-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-100">
+                          {tile.tag}
+                        </span>
+                        <span className="text-[10px] font-mono text-stone-400">
+                          id: {tile.id}
+                        </span>
+                      </div>
+
+                      <h5 className="font-serif text-base font-bold text-stone-900 leading-snug">
+                        {tile.title}
+                      </h5>
+                      <p className="text-stone-500 text-xs mt-0.5 line-clamp-1">
+                        {tile.subtitle}
+                      </p>
+
+                      <div className="mt-3 relative aspect-4/3 rounded-2xl overflow-hidden bg-stone-100 border">
+                        <img
+                          src={tile.image}
+                          alt={tile.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                      <span className="text-[11px] text-stone-500 font-medium">
+                        Target: <strong className="text-stone-700">{tile.id}</strong>
+                      </span>
+                      <button
+                        onClick={() => { setEditingCategoryTile(tile); setIsCategoryModalOpen(true); }}
+                        className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-rose-500 via-pink-500 to-studio-600 hover:opacity-95 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit Tile</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SECTION 2: Shop by Gifting Budget & Price Deciding */}
+            <div className="space-y-3 pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-serif text-base font-bold text-stone-900 flex items-center gap-1.5">
+                    <DollarSign className="w-4 h-4 text-emerald-600" />
+                    <span>Shop by Gifting Budget & Price Deciding</span>
+                  </h4>
+                  <p className="text-xs text-stone-500">
+                    Set price thresholds, titles, and descriptions for the 4 budget tiers
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {budgetTiers.map((tier) => (
+                  <div
+                    key={tier.id}
+                    className="p-5 rounded-3xl bg-white border border-stone-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-3xl">{tier.icon}</span>
+                        <div className="text-right">
+                          <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-stone-100 text-stone-900 block">
+                            {tier.title}
+                          </span>
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md mt-1 inline-block border border-emerald-200">
+                            Max: ₹{tier.maxPrice}
+                          </span>
+                        </div>
+                      </div>
+
+                      <h5 className="font-serif text-sm font-bold text-stone-900 mb-0.5">
+                        {tier.label}
+                      </h5>
+                      <p className="text-stone-500 text-xs leading-relaxed">
+                        {tier.desc}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-stone-400">
+                        {tier.id}
+                      </span>
+                      <button
+                        onClick={() => { setEditingBudgetTier(tier); setIsBudgetModalOpen(true); }}
+                        className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:opacity-95 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit Price & Details</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
       </div>
+
+      {/* Category Tile Form Modal */}
+      {isCategoryModalOpen && (
+        <CategoryTileModal
+          tile={editingCategoryTile}
+          onClose={() => {
+            setIsCategoryModalOpen(false);
+            setEditingCategoryTile(null);
+          }}
+          onSave={handleSaveCategoryTile}
+        />
+      )}
+
+      {/* Budget Tier Form Modal */}
+      {isBudgetModalOpen && (
+        <BudgetTierModal
+          tier={editingBudgetTier}
+          onClose={() => {
+            setIsBudgetModalOpen(false);
+            setEditingBudgetTier(null);
+          }}
+          onSave={handleSaveBudgetTier}
+        />
+      )}
 
       {/* Instagram Post Form Modal */}
       {isInstagramModalOpen && (

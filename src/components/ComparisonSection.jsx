@@ -91,7 +91,7 @@ export default function ComparisonSection({ onNavigate }) {
             <div className="pt-2">
               <button
                 onClick={() => {
-                  if (onNavigate) onNavigate('shop');
+                  if (onNavigate) onNavigate('shop', { category: 'bouquets' });
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="w-full py-2.5 rounded-2xl bg-studio-600 hover:bg-studio-700 text-white text-xs font-bold shadow-sm transition-colors"

@@ -132,7 +132,7 @@ export default function BannerFormModal({ banner, onClose, onSave }) {
               <span>Banner Visual Photo (Cloudinary Upload)</span>
             </label>
             <div className="flex items-center gap-3">
-              <label className="px-4 py-2 bg-studio-600 hover:bg-studio-700 text-white font-semibold rounded-xl text-xs flex items-center gap-2 cursor-pointer transition-colors shrink-0">
+              <label className="px-4 py-2 bg-gradient-to-r from-rose-500 via-rosebud-500 to-amber-500 hover:opacity-95 text-white font-semibold rounded-xl text-xs flex items-center gap-2 cursor-pointer transition-all shrink-0 shadow-xs">
                 <Upload className="w-3.5 h-3.5" />
                 <span>{isUploading ? 'Uploading to Cloudinary...' : 'Upload Photo'}</span>
                 <input
@@ -284,7 +284,7 @@ export default function BannerFormModal({ banner, onClose, onSave }) {
             <button
               type="submit"
               disabled={isUploading}
-              className="px-6 py-2 rounded-xl bg-studio-600 hover:bg-studio-700 text-white font-semibold shadow-md transition-colors flex items-center gap-1.5"
+              className="px-6 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-rosebud-500 to-amber-500 hover:opacity-95 text-white font-semibold shadow-md shadow-rosebud-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>{isEditing ? 'Save Banner' : 'Publish Banner'}</span>

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Lock, Mail, Key, ShieldCheck, ArrowRight, Sparkles, UserCheck } from 'lucide-react';
-import { loginAdmin } from './adminAuth';
+import { loginAdmin, getAdminAccounts } from './adminAuth';
 
 export default function AdminLogin({ onLoginSuccess, onCancel }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const accounts = getAdminAccounts();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -114,33 +115,37 @@ export default function AdminLogin({ onLoginSuccess, onCancel }) {
         </form>
 
         {/* Quick Demo Logins for Client / Dev Convenience */}
-        <div className="mt-8 pt-6 border-t border-stone-100">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400 text-center mb-3">
-            Quick Fill Credentials
-          </p>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <button
-              type="button"
-              onClick={() => handleQuickLogin('client@littlegiftstudio.com', 'giftclient2026')}
-              className="p-2.5 rounded-lg bg-studio-50 hover:bg-studio-100 text-studio-700 font-medium text-left border border-studio-200/60 transition-colors flex flex-col"
-            >
-              <span className="font-semibold flex items-center gap-1">
-                <UserCheck className="w-3 h-3 text-studio-600" /> Client Account
-              </span>
-              <span className="text-[10px] text-stone-500">giftclient2026</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickLogin('admin@littlegiftstudio.com', 'studioadmin2026')}
-              className="p-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 font-medium text-left border border-stone-200 transition-colors flex flex-col"
-            >
-              <span className="font-semibold flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-stone-600" /> Dev Admin
-              </span>
-              <span className="text-[10px] text-stone-500">studioadmin2026</span>
-            </button>
+        {accounts.length > 0 && (
+          <div className="mt-8 pt-6 border-t border-stone-100">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400 text-center mb-3">
+              Quick Fill Credentials
+            </p>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {accounts.map((acc, idx) => (
+                <button
+                  key={acc.email || idx}
+                  type="button"
+                  onClick={() => handleQuickLogin(acc.email, acc.password)}
+                  className={`p-2.5 rounded-lg text-left border transition-colors flex flex-col ${
+                    idx === 0
+                      ? 'bg-studio-50 hover:bg-studio-100 text-studio-700 border-studio-200/60'
+                      : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
+                  }`}
+                >
+                  <span className="font-semibold flex items-center gap-1">
+                    {idx === 0 ? (
+                      <UserCheck className="w-3 h-3 text-studio-600" />
+                    ) : (
+                      <ShieldCheck className="w-3 h-3 text-stone-600" />
+                    )}
+                    {acc.name || acc.role}
+                  </span>
+                  <span className="text-[10px] text-stone-500 truncate">{acc.email}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {onCancel && (
           <div className="mt-6 text-center">

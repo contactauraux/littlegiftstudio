@@ -70,7 +70,7 @@ export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNaviga
 
           <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
             <button
-              onClick={() => onNavigate?.('shop')}
+              onClick={() => onNavigate?.('shop', { category: 'bouquets' })}
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-rosebud-700 hover:text-rosebud-800 transition-colors"
             >
               <span>View All Collection</span>

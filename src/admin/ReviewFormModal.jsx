@@ -205,7 +205,7 @@ export default function ReviewFormModal({ review, onClose, onSave }) {
             </button>
             <button
               type="submit"
-              className="px-6 py-2 rounded-xl bg-studio-600 hover:bg-studio-700 text-white font-semibold shadow-md transition-colors flex items-center gap-1.5"
+              className="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:opacity-95 text-white font-semibold shadow-md shadow-amber-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>{isEditing ? 'Save Review' : 'Publish Review'}</span>

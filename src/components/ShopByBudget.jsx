@@ -1,46 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Tag, Gift, Sparkles, Heart } from 'lucide-react';
-
-const BUDGET_TIERS = [
-  {
-    id: 'under-249',
-    title: 'Under ₹249',
-    label: 'Pocket Treats & Charms',
-    desc: 'Cute keychains, initial charms & single blossom stems.',
-    icon: '🎀',
-    color: 'from-amber-50 to-orange-50 border-amber-200 text-amber-900',
-    btnBg: 'bg-amber-600 hover:bg-amber-700',
-  },
-  {
-    id: 'under-499',
-    title: 'Under ₹499',
-    label: 'Everyday Smiles & Clips',
-    desc: 'Hair clip pairs, mini claw sets & desk blossom wraps.',
-    icon: '🌸',
-    color: 'from-rose-50 to-pink-50 border-rose-200 text-rose-900',
-    btnBg: 'bg-rose-600 hover:bg-rose-700',
-  },
-  {
-    id: 'under-799',
-    title: 'Under ₹799',
-    label: 'Everlasting Bouquets',
-    desc: '3 to 5 stem tulip, sunflower & lavender bouquets.',
-    icon: '💐',
-    color: 'from-purple-50 to-fuchsia-50 border-purple-200 text-purple-900',
-    btnBg: 'bg-purple-600 hover:bg-purple-700',
-  },
-  {
-    id: 'under-1499',
-    title: 'Luxury Hampers',
-    label: 'All-In-One Gift Boxes',
-    desc: 'Complete hamper with fairy lights, cards & accessories.',
-    icon: '🎁',
-    color: 'from-emerald-50 to-teal-50 border-emerald-200 text-emerald-900',
-    btnBg: 'bg-emerald-700 hover:bg-emerald-800',
-  },
-];
+import { getStoredBudgetTiers } from '../lib/curationStore';
 
 export default function ShopByBudget({ onNavigate }) {
+  const [budgetTiers, setBudgetTiers] = useState(getStoredBudgetTiers());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setBudgetTiers(getStoredBudgetTiers());
+    };
+    window.addEventListener('lgs_budget_tiers_updated', handleUpdate);
+    return () => window.removeEventListener('lgs_budget_tiers_updated', handleUpdate);
+  }, []);
   return (
     <section className="py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,10 +32,10 @@ export default function ShopByBudget({ onNavigate }) {
 
         {/* 4 Budget Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {BUDGET_TIERS.map((tier) => (
+          {budgetTiers.map((tier) => (
             <div
               key={tier.id}
-              onClick={() => onNavigate && onNavigate('shop')}
+              onClick={() => onNavigate && onNavigate('shop', { budget: tier.id })}
               className={`p-5 rounded-3xl bg-gradient-to-b ${tier.color} border shadow-soft hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group`}
             >
               <div>

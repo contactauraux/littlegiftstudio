@@ -1,46 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
-
-const CATEGORY_TILES = [
-  {
-    id: 'bouquets',
-    title: 'Everlasting Bouquets',
-    subtitle: 'Tulips, Sunflowers, Daisies & Roses',
-    tag: 'Popular',
-    image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80',
-    color: 'from-rose-50 to-pink-100/60 border-rose-200',
-    btnColor: 'bg-rose-600 hover:bg-rose-700',
-  },
-  {
-    id: 'hampers',
-    title: 'Curated Gift Hampers',
-    subtitle: 'Bouquets + Clips + Lights + Cards',
-    tag: 'All-In-One',
-    image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80',
-    color: 'from-purple-50 to-indigo-100/60 border-purple-200',
-    btnColor: 'bg-purple-600 hover:bg-purple-700',
-  },
-  {
-    id: 'clips',
-    title: 'Fluffy Hair Clips & Claws',
-    subtitle: 'Snap clips, mini claws & floral pins',
-    tag: 'Everyday Cute',
-    image: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?auto=format&fit=crop&w=600&q=80',
-    color: 'from-amber-50 to-yellow-100/60 border-amber-200',
-    btnColor: 'bg-amber-600 hover:bg-amber-700',
-  },
-  {
-    id: 'accessories',
-    title: 'Keychains & Bag Charms',
-    subtitle: 'Alphabet initials & beaded daisies',
-    tag: 'Customizable',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
-    color: 'from-emerald-50 to-teal-100/60 border-emerald-200',
-    btnColor: 'bg-emerald-600 hover:bg-emerald-700',
-  },
-];
+import { getStoredCategoryTiles } from '../lib/curationStore';
 
 export default function CategoryVisualGrid({ onNavigate }) {
+  const [tiles, setTiles] = useState(getStoredCategoryTiles());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setTiles(getStoredCategoryTiles());
+    };
+    window.addEventListener('lgs_category_tiles_updated', handleUpdate);
+    return () => window.removeEventListener('lgs_category_tiles_updated', handleUpdate);
+  }, []);
   return (
     <section className="py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,7 +27,7 @@ export default function CategoryVisualGrid({ onNavigate }) {
             </h2>
           </div>
           <button
-            onClick={() => onNavigate && onNavigate('shop')}
+            onClick={() => onNavigate && onNavigate('shop', { category: 'all' })}
             className="text-xs sm:text-sm font-bold text-[#c75b45] hover:text-[#a64733] flex items-center gap-1 group transition-colors"
           >
             <span>View All Catalog</span>
@@ -66,10 +37,10 @@ export default function CategoryVisualGrid({ onNavigate }) {
 
         {/* 4-Category Tile Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {CATEGORY_TILES.map((cat) => (
+          {tiles.map((cat) => (
             <div
               key={cat.id}
-              onClick={() => onNavigate && onNavigate('shop')}
+              onClick={() => onNavigate && onNavigate('shop', { category: cat.id })}
               className={`p-4 rounded-3xl bg-gradient-to-b ${cat.color} border shadow-soft hover:shadow-card-hover transition-all duration-300 cursor-pointer group flex flex-col justify-between overflow-hidden relative`}
             >
               <div>

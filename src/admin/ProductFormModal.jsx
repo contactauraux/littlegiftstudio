@@ -256,7 +256,7 @@ export default function ProductFormModal({ product, onClose, onSave }) {
               {/* Upload or Link inputs */}
               <div className="flex-1 space-y-2 w-full">
                 <div className="flex gap-2">
-                  <label className="px-4 py-2 bg-studio-600 hover:bg-studio-700 text-white font-semibold rounded-xl text-xs flex items-center gap-2 cursor-pointer shadow-sm transition-colors">
+                  <label className="px-4 py-2 bg-gradient-to-r from-studio-600 via-rose-500 to-rosebud-600 hover:opacity-95 text-white font-semibold rounded-xl text-xs flex items-center gap-2 cursor-pointer shadow-md shadow-studio-600/20 transition-all">
                     <Upload className="w-3.5 h-3.5" />
                     <span>{isUploadingMain ? 'Uploading...' : 'Upload Main Photo'}</span>
                     <input
@@ -425,33 +425,52 @@ export default function ProductFormModal({ product, onClose, onSave }) {
             </div>
           </div>
 
-          {/* SECTION 4: Category & Label */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-stone-700 mb-1">
-                Store Category *
+          {/* SECTION 4: Category Selection & Label */}
+          <div className="space-y-3 p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
+            <div className="flex items-center justify-between">
+              <label className="block font-serif text-sm font-bold text-stone-900 flex items-center gap-1.5">
+                <Tag className="w-4 h-4 text-studio-600" />
+                <span>Choose Store Category *</span>
               </label>
-              <select
-                value={category}
-                onChange={handleCategoryChange}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-studio-500 bg-white"
-              >
-                {CATEGORIES.map(c => (
-                  <option key={c.id} value={c.id}>{c.label} ({c.id})</option>
-                ))}
-              </select>
+              <span className="text-[11px] text-stone-500 font-mono">
+                Active: <strong className="text-studio-700">{category}</strong>
+              </span>
             </div>
 
-            <div>
-              <label className="block font-semibold text-stone-700 mb-1">
-                Display Category Subtitle
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {CATEGORIES.map(c => {
+                const isSelected = category === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => {
+                      setCategory(c.id);
+                      setCategoryLabel(c.label);
+                    }}
+                    className={`px-3 py-2.5 rounded-xl border text-xs font-semibold text-left transition-all flex items-center justify-between cursor-pointer ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-studio-600 via-rose-500 to-amber-500 text-white border-transparent shadow-md shadow-rose-500/20 ring-2 ring-rose-300 scale-[1.02]'
+                        : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200'
+                    }`}
+                  >
+                    <span>{c.label}</span>
+                    {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="pt-2">
+              <label className="block font-semibold text-stone-700 text-xs mb-1">
+                Display Category Subtitle / Custom Tag
               </label>
               <input
                 type="text"
                 value={categoryLabel}
                 onChange={(e) => setCategoryLabel(e.target.value)}
                 placeholder="e.g. Everlasting Bouquet"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-studio-500"
+                className="w-full px-3.5 py-2 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-studio-500 bg-white text-xs"
               />
             </div>
           </div>
@@ -623,7 +642,7 @@ export default function ProductFormModal({ product, onClose, onSave }) {
             <button
               type="submit"
               disabled={isUploadingMain || uploadingVariantIdx !== null}
-              className="px-7 py-2.5 rounded-xl bg-studio-600 hover:bg-studio-700 text-white font-semibold shadow-md shadow-studio-600/20 transition-all flex items-center gap-2"
+              className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-studio-600 via-rose-500 to-amber-500 hover:opacity-95 text-white font-semibold shadow-md shadow-rose-500/20 transition-all flex items-center gap-2 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>{isEditing ? 'Save Changes' : 'Publish Product to Store'}</span>

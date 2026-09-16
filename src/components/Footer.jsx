@@ -143,14 +143,6 @@ export default function Footer({ onNavigate }) {
                   Instagram DM: @little.gift.studio._
                 </a>
               </p>
-              <p className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Instant 1-Click DM Ordering</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-studio-400 shrink-0" />
-                <span>Home Studio • Shipping Pan-India</span>
-              </p>
             </div>
           </div>
 

@@ -1,11 +1,19 @@
 // Cloudinary Environment Configuration & Direct Upload Helper
 
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '';
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '';
+const CLOUD_NAME = (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '').trim();
+const UPLOAD_PRESET = (import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '').trim();
 const DEFAULT_FOLDER = 'littlegiftstudio/products';
 
 export function isCloudinaryConfigured() {
   return Boolean(CLOUD_NAME && UPLOAD_PRESET && CLOUD_NAME !== 'your_cloud_name_here');
+}
+
+export function getCloudinaryConfig() {
+  return {
+    cloudName: CLOUD_NAME,
+    uploadPreset: UPLOAD_PRESET,
+    source: '.env',
+  };
 }
 
 /**

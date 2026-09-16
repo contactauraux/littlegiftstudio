@@ -141,6 +141,12 @@ export default function Hero({ products = [], onQuickView, onAddToCart, onNaviga
                           onNavigate('contact');
                         } else if (banner.link === '#reviews') {
                           onNavigate('reviews');
+                        } else if (banner.id === 'banner-1' || banner.id === 'banner-4') {
+                          onNavigate('shop', { category: 'bouquets' });
+                        } else if (banner.id === 'banner-2') {
+                          onNavigate('shop', { category: 'hampers' });
+                        } else if (banner.id === 'banner-3') {
+                          onNavigate('shop', { category: 'clips' });
                         } else {
                           onNavigate('shop');
                         }

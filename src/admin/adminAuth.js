@@ -3,32 +3,55 @@
 const AUTH_STORAGE_KEY = 'lgs_admin_session';
 const CREDENTIALS_KEY = 'lgs_admin_credentials';
 
-// Default Accounts for Developer and Client
-const DEFAULT_ACCOUNTS = [
-  {
-    email: 'admin@littlegiftstudio.com',
-    password: 'studioadmin2026',
-    role: 'Developer / Super Admin',
-    name: 'Dev Admin'
-  },
-  {
-    email: 'client@littlegiftstudio.com',
-    password: 'giftclient2026',
-    role: 'Store Owner',
-    name: 'Little Gift Studio Owner'
+// Read Default Accounts from Environment Variables
+export function getDefaultAdminAccounts() {
+  const accounts = [];
+
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'admin@littlegiftstudio.com';
+  const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'studioadmin2026';
+  const adminRole = import.meta.env.VITE_ADMIN_ROLE || 'Developer / Super Admin';
+  const adminName = import.meta.env.VITE_ADMIN_NAME || 'Dev Admin';
+
+  if (adminEmail && adminPassword) {
+    accounts.push({
+      email: adminEmail,
+      password: adminPassword,
+      role: adminRole,
+      name: adminName
+    });
   }
-];
+
+  const clientEmail = import.meta.env.VITE_CLIENT_EMAIL || 'client@littlegiftstudio.com';
+  const clientPassword = import.meta.env.VITE_CLIENT_PASSWORD || 'giftclient2026';
+  const clientRole = import.meta.env.VITE_CLIENT_ROLE || 'Store Owner';
+  const clientName = import.meta.env.VITE_CLIENT_NAME || 'Little Gift Studio Owner';
+
+  if (clientEmail && clientPassword) {
+    accounts.push({
+      email: clientEmail,
+      password: clientPassword,
+      role: clientRole,
+      name: clientName
+    });
+  }
+
+  return accounts;
+}
 
 export function getAdminAccounts() {
+  const defaultAccounts = getDefaultAdminAccounts();
   try {
     const saved = localStorage.getItem(CREDENTIALS_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     }
   } catch (e) {
     console.error('Failed to load credentials', e);
   }
-  return DEFAULT_ACCOUNTS;
+  return defaultAccounts;
 }
 
 export function saveAdminAccounts(accounts) {
@@ -40,9 +63,19 @@ export function saveAdminAccounts(accounts) {
 }
 
 export function loginAdmin(email, password) {
-  const accounts = getAdminAccounts();
   const trimmedEmail = email.trim().toLowerCase();
-  const matched = accounts.find(
+  const defaultAccounts = getDefaultAdminAccounts();
+  const savedAccounts = getAdminAccounts();
+
+  // Look in both default env accounts and saved accounts
+  const combinedAccounts = [...defaultAccounts];
+  savedAccounts.forEach(acc => {
+    if (!combinedAccounts.some(a => a.email.toLowerCase() === acc.email.toLowerCase())) {
+      combinedAccounts.push(acc);
+    }
+  });
+
+  const matched = combinedAccounts.find(
     acc => acc.email.toLowerCase() === trimmedEmail && acc.password === password
   );
 
