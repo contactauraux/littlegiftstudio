@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { MessageCircle, Mail, MapPin, Send, CheckCircle2, Sparkles, Heart } from 'lucide-react';
+import { Mail, MapPin, Send, CheckCircle2, Sparkles, Heart } from 'lucide-react';
 import { InstagramIcon } from '../components/Icons';
+import { sendInquiryViaInstagram, openInstagramDM } from '../lib/instagram';
 import FAQ from '../components/FAQ';
 
 export default function ContactPage() {
@@ -9,22 +10,18 @@ export default function ContactPage() {
   const [formMsg, setFormMsg] = useState('');
   const [sent, setSent] = useState(false);
 
-  const handleSendWhatsApp = (e) => {
+  const handleSendInstagram = (e) => {
     e.preventDefault();
     if (!formName.trim() || !formMsg.trim()) return;
 
-    const message = `🌸 *New Website Inquiry for Little Gift Studio*
+    sendInquiryViaInstagram({
+      name: formName,
+      contact: formContact,
+      message: formMsg,
+    });
 
-👤 *Name:* ${formName}
-📱 *Phone/Email:* ${formContact || 'Not provided'}
-💬 *Message:* "${formMsg}"
-
-_Looking forward to discussing custom gifts!_`;
-
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encoded}`, '_blank');
     setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    setTimeout(() => setSent(false), 5000);
   };
 
   return (
@@ -41,7 +38,7 @@ _Looking forward to discussing custom gifts!_`;
             Get in Touch with Our Maker
           </h1>
           <p className="text-stone-600 text-xs sm:text-sm mt-2 leading-relaxed">
-            Have questions about a custom bouquet, special deadline, color palette, or bulk order? Connect directly with us on Instagram or WhatsApp!
+            Have questions about a custom bouquet, special deadline, color palette, or bulk order? Connect directly with us on Instagram DM!
           </p>
         </div>
 
@@ -60,49 +57,47 @@ _Looking forward to discussing custom gifts!_`;
                 <InstagramIcon className="w-6 h-6" />
               </div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-pink-700 block mb-1">
-                Official Instagram
+                Official Instagram Page
               </span>
               <h3 className="font-serif text-xl font-bold text-stone-900 group-hover:text-pink-600 transition-colors">
                 @little.gift.studio._
               </h3>
               <p className="text-stone-600 text-xs mt-2 leading-relaxed">
-                Follow our daily flower making reels, sneak peeks, and drop a DM for quick custom orders!
+                Follow our daily flower making reels, sneak peeks, and explore our newest design releases!
               </p>
             </div>
 
             <div className="mt-6 pt-4 border-t border-pink-200/60 flex items-center justify-between text-xs font-bold text-pink-700">
-              <span>Send Instagram DM</span>
+              <span>Visit Instagram Profile</span>
               <span className="text-base group-hover:translate-x-1 transition-transform">➔</span>
             </div>
           </a>
 
-          {/* 2. WhatsApp Direct Order Card */}
-          <a
-            href="https://wa.me/?text=Hi%20Little%20Gift%20Studio!%20I%20would%20love%20to%20inquire%20about%20a%20handmade%20gift%20%F0%9F%8C%B8"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 border border-emerald-200 shadow-soft hover:shadow-card-hover hover:scale-102 transition-all duration-300 group flex flex-col justify-between"
+          {/* 2. Instagram Direct Chat Card */}
+          <button
+            onClick={() => openInstagramDM('Hi Little Gift Studio! 🌸 I would love to inquire about ordering a handmade bouquet / gift.')}
+            className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-rosebud-50 via-pink-50 to-purple-50 border border-rosebud-200 shadow-soft hover:shadow-card-hover hover:scale-102 transition-all duration-300 group flex flex-col justify-between text-left cursor-pointer"
           >
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md mb-4 group-hover:scale-110 transition-transform">
-                <MessageCircle className="w-6 h-6" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rosebud-500 to-pink-600 text-white flex items-center justify-center shadow-md mb-4 group-hover:scale-110 transition-transform">
+                <InstagramIcon className="w-6 h-6" />
               </div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 block mb-1">
-                Instant Chat & Order
+              <span className="text-[11px] font-bold uppercase tracking-wider text-studio-700 block mb-1">
+                Direct DM Chat
               </span>
-              <h3 className="font-serif text-xl font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
-                WhatsApp Maker Chat
+              <h3 className="font-serif text-xl font-bold text-stone-900 group-hover:text-studio-600 transition-colors">
+                Instagram Direct Message
               </h3>
               <p className="text-stone-600 text-xs mt-2 leading-relaxed">
-                Direct one-on-one communication with the artist to discuss colors, ribbon styles, and card text.
+                Direct one-on-one communication with the artist to discuss colors, ribbon styles, and personalized cards.
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-emerald-200/60 flex items-center justify-between text-xs font-bold text-emerald-800">
-              <span>Start WhatsApp Chat</span>
+            <div className="mt-6 pt-4 border-t border-rosebud-200/60 flex items-center justify-between text-xs font-bold text-studio-700">
+              <span>Send Instagram DM</span>
               <span className="text-base group-hover:translate-x-1 transition-transform">➔</span>
             </div>
-          </a>
+          </button>
 
           {/* 3. Studio & Delivery Details Card */}
           <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-amber-50 via-cream to-studio-50 border border-amber-200 shadow-soft flex flex-col justify-between">
@@ -134,14 +129,14 @@ _Looking forward to discussing custom gifts!_`;
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xl">💌</span>
             <h2 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
-              Send a Direct Message
+              Send a Direct Inquiry
             </h2>
           </div>
           <p className="text-xs text-stone-500 mb-6">
-            Fill out the details below and we will automatically open a pre-formatted chat on WhatsApp!
+            Fill out the details below and we will automatically prepare your message and open Instagram Direct Message!
           </p>
 
-          <form onSubmit={handleSendWhatsApp} className="space-y-4">
+          <form onSubmit={handleSendInstagram} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="font-bold text-xs text-stone-800 block mb-1">Your Name *</label>
@@ -156,12 +151,12 @@ _Looking forward to discussing custom gifts!_`;
               </div>
 
               <div>
-                <label className="font-bold text-xs text-stone-800 block mb-1">Phone / WhatsApp Number</label>
+                <label className="font-bold text-xs text-stone-800 block mb-1">Instagram Handle / Contact</label>
                 <input
                   type="text"
                   value={formContact}
                   onChange={(e) => setFormContact(e.target.value)}
-                  placeholder="e.g. +91 98765 43210"
+                  placeholder="e.g. @priya_crafts"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:outline-none focus:border-studio-500 text-xs"
                 />
               </div>
@@ -181,17 +176,17 @@ _Looking forward to discussing custom gifts!_`;
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-rosebud-600 hover:opacity-95 text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
             >
-              <Send className="w-4 h-4" />
-              <span>Send Message via WhatsApp</span>
+              <InstagramIcon className="w-4 h-4" />
+              <span>Send Inquiry via Instagram DM</span>
             </button>
           </form>
 
           {sent && (
-            <div className="mt-4 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Message prepared! Opening WhatsApp chat...</span>
+            <div className="mt-4 p-3 rounded-2xl bg-pink-50 border border-pink-200 text-pink-900 text-xs font-semibold flex items-center gap-2 animate-fadeIn">
+              <CheckCircle2 className="w-4 h-4 text-pink-600 shrink-0" />
+              <span>Inquiry copied to clipboard! Opening Instagram DM... Just paste and send!</span>
             </div>
           )}
         </div>

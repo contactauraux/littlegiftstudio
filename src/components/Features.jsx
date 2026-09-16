@@ -24,7 +24,7 @@ export default function Features() {
     {
       icon: HeartHandshake,
       title: 'Direct Maker Touch',
-      desc: 'Friendly small-business feel. Direct WhatsApp chat to discuss custom requirements, photo cards, and dates.',
+      desc: 'Friendly small-business feel. Direct Instagram DM to discuss custom requirements, photo cards, and dates.',
       color: 'bg-studio-100 text-studio-700',
     },
     {

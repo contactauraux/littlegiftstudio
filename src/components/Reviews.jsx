@@ -3,104 +3,23 @@ import { cn } from '../lib/utils';
 import { InfiniteSlider } from './ui/infinite-slider';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Star, Heart, Plus, Sparkles, X, CheckCircle, MessageSquare } from 'lucide-react';
-
-const INITIAL_TESTIMONIALS = [
-  {
-    quote: "I ordered the pastel tulips for my sister's 21st birthday and she cried! Unlike real flowers that die in 3 days, these pipe cleaner tulips look so cute on her study desk forever.",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    name: "Ananya Sharma",
-    role: "Bangalore",
-    company: "Pastel Tulip Bouquet",
-    rating: 5,
-    date: "2 days ago",
-  },
-  {
-    quote: "The 'Forever Bloom' Hamper was the best anniversary surprise. The WhatsApp maker was so helpful in customizing the ribbon to my girlfriend's favorite lilac shade. Safe packaging too!",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-    name: "Rohan Kapoor",
-    role: "Mumbai",
-    company: "Deluxe Celebration Hamper",
-    rating: 5,
-    date: "1 week ago",
-  },
-  {
-    quote: "10/10 quality! You can see so much love and patience in the craft. The daisy clips hold thick hair so well and everyone in college asked me where I got them from.",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
-    name: "Meera Patel",
-    role: "Pune",
-    company: "Daisy Blossom Hair Clips",
-    rating: 5,
-    date: "2 weeks ago",
-  },
-  {
-    quote: "The sunflowers are so vibrant! Sturdy, fuzzy, and arrived in a crush-proof rigid box with cute aesthetic stickers and a lovely handwritten vintage note.",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80",
-    name: "Tanvi Mathur",
-    role: "Delhi",
-    company: "Sunshine Joy Sunflower Set",
-    rating: 5,
-    date: "2 weeks ago",
-  },
-  {
-    quote: "I customized a bouquet with 3 tulips and 2 daisies for Friendship Day. The live customizer made it so effortless to order on WhatsApp. Super fast response!",
-    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=80",
-    name: "Sanya Roy",
-    role: "Kolkata",
-    company: "Custom Bouquet Studio",
-    rating: 5,
-    date: "3 weeks ago",
-  },
-  {
-    quote: "Bought the initial floral keychain for my bestie's backpack. It's so tactile, lightweight, and hasn't shed or frayed at all after months of daily use.",
-    image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=200&q=80",
-    name: "Aditya Verma",
-    role: "Hyderabad",
-    company: "Custom Initial Charm",
-    rating: 5,
-    date: "3 weeks ago",
-  },
-  {
-    quote: "Aesthetic packaging, reasonable pricing, and 100% handmade feel. Far better than mass-produced gifts. Will definitely be a repeat buyer for every birthday!",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
-    name: "Nikhil Joshi",
-    role: "Chennai",
-    company: "Bestie Celebration Box",
-    rating: 5,
-    date: "1 month ago",
-  },
-  {
-    quote: "The Korean wrap paper and fairy lights gave the entire bouquet such a magical cozy glow. My mom loved receiving everlasting flowers for Mother's Day.",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
-    name: "Pooja Hegde",
-    role: "Ahmedabad",
-    company: "Enchanted Lavender Bouquet",
-    rating: 5,
-    date: "1 month ago",
-  },
-  {
-    quote: "I appreciate the attention to detail. Every petal was perfectly curved, and the handwritten calligraphy note felt so warm and personal. Thank you Little Gift Studio!",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
-    name: "Karan Singhania",
-    role: "Jaipur",
-    company: "Single Blossom Pocket",
-    rating: 5,
-    date: "1 month ago",
-  },
-];
+import { getStoredReviews, addReview } from '../lib/contentStore';
 
 export function Reviews() {
-  const [testimonials, setTestimonials] = useState(() => {
-    try {
-      const saved = localStorage.getItem('lgs_user_reviews');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return [...parsed, ...INITIAL_TESTIMONIALS];
+  const [testimonials, setTestimonials] = useState(() => getStoredReviews());
+
+  useEffect(() => {
+    const handleReviewsUpdated = (e) => {
+      if (e.detail) {
+        setTestimonials(e.detail);
+      } else {
+        setTestimonials(getStoredReviews());
       }
-    } catch (e) {
-      console.error(e);
-    }
-    return INITIAL_TESTIMONIALS;
-  });
+    };
+
+    window.addEventListener('lgs_reviews_updated', handleReviewsUpdated);
+    return () => window.removeEventListener('lgs_reviews_updated', handleReviewsUpdated);
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submittedToast, setSubmittedToast] = useState(false);
@@ -125,23 +44,13 @@ export function Reviews() {
       company: formProduct,
       rating: formRating,
       quote: formQuote.trim(),
-      image: '',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
       avatarEmoji: formAvatar,
       date: 'Just now',
     };
 
-    // Update in state
-    const updated = [newReview, ...testimonials];
-    setTestimonials(updated);
-
-    // Save user submissions to localStorage
-    try {
-      const existing = localStorage.getItem('lgs_user_reviews');
-      const parsedExisting = existing ? JSON.parse(existing) : [];
-      localStorage.setItem('lgs_user_reviews', JSON.stringify([newReview, ...parsedExisting]));
-    } catch (err) {
-      console.error(err);
-    }
+    addReview(newReview);
+    setTestimonials(getStoredReviews());
 
     // Reset Form
     setFormName('');

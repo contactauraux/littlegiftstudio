@@ -1,5 +1,6 @@
 import React from 'react';
-import { Palette, Sparkles, ArrowRight, MessageCircle, Heart } from 'lucide-react';
+import { Palette, Sparkles, ArrowRight, Heart } from 'lucide-react';
+import { InstagramIcon } from './Icons';
 
 export default function CustomizerPromoBanner({ onNavigate }) {
   return (
@@ -26,7 +27,7 @@ export default function CustomizerPromoBanner({ onNavigate }) {
               </h2>
 
               <p className="text-stone-300 text-xs sm:text-sm max-w-xl leading-relaxed">
-                Choose your favorite flower mix (tulips, sunflowers, daisies, roses), pick the wrapping color palette, add cute hair clips or fairy lights, and generate an instant WhatsApp order in seconds.
+                Choose your favorite flower mix (tulips, sunflowers, daisies, roses), pick the wrapping color palette, add cute hair clips or fairy lights, and generate an instant Instagram DM order in seconds.
               </p>
 
               {/* Action Buttons */}
@@ -44,13 +45,13 @@ export default function CustomizerPromoBanner({ onNavigate }) {
                 </button>
 
                 <a
-                  href="https://wa.me/?text=Hi%20Little%20Gift%20Studio!%20I%20have%20a%20custom%20order%20idea%20in%20mind%20%F0%9F%8C%B8"
+                  href="https://ig.me/m/little.gift.studio._"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm backdrop-blur-md flex items-center justify-center gap-2 transition-all"
                 >
-                  <MessageCircle className="w-4 h-4 text-emerald-400" />
-                  <span>Discuss Idea on WhatsApp</span>
+                  <InstagramIcon className="w-4 h-4 text-pink-400" />
+                  <span>Discuss Idea on Instagram DM</span>
                 </a>
               </div>
             </div>

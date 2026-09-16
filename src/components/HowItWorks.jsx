@@ -12,8 +12,8 @@ export default function HowItWorks() {
     {
       number: '02',
       icon: MessageSquareText,
-      title: 'Quick WhatsApp Chat',
-      desc: 'Connect directly with the maker to finalize your color scheme, recipient note, and delivery date.',
+      title: 'Quick Instagram DM',
+      desc: 'Connect directly with the maker on Instagram DM to finalize your color scheme, recipient note, and delivery date.',
     },
     {
       number: '03',

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PRODUCTS } from './data/products';
+import { getStoredProducts } from './lib/productStore';
+import { orderProductViaInstagram } from './lib/instagram';
 import IntroVideoScreen from './components/IntroVideoScreen';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -16,10 +17,13 @@ import ReviewsPage from './pages/ReviewsPage';
 import FaqPage from './pages/FaqPage';
 import ContactPage from './pages/ContactPage';
 
+// Admin Portal
+import AdminPortal from './admin/AdminPortal';
+
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [currentPage, setCurrentPage] = useState('home');
-  const [products] = useState(PRODUCTS);
+  const [products, setProducts] = useState(() => getStoredProducts());
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem('lgs_cart');
@@ -32,11 +36,25 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '' });
 
+  // Sync products if updated from Admin Portal
+  useEffect(() => {
+    const handleProductsUpdated = (e) => {
+      if (e.detail) {
+        setProducts(e.detail);
+      } else {
+        setProducts(getStoredProducts());
+      }
+    };
+
+    window.addEventListener('lgs_products_updated', handleProductsUpdated);
+    return () => window.removeEventListener('lgs_products_updated', handleProductsUpdated);
+  }, []);
+
   // Sync with URL hash for back/forward browser navigation
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      if (['home', 'shop', 'custom', 'contact', 'reviews', 'faqs'].includes(hash)) {
+      if (['home', 'shop', 'custom', 'contact', 'reviews', 'faqs', 'admin'].includes(hash)) {
         setCurrentPage(hash);
       }
     };
@@ -118,27 +136,26 @@ export default function App() {
     setCartItems([]);
   };
 
-  const handleDirectWhatsApp = (
+  const handleDirectInstagramOrder = (
     product,
     selectedColor = '',
     customNote = '',
     qty = 1
   ) => {
-    const colorText = selectedColor ? ` (Color: ${selectedColor})` : '';
-    const noteText = customNote ? `\n💌 *Note:* "${customNote}"` : '';
-    const message = `🌸 *Hi Little Gift Studio!*
-
-I would like to order:
-*${product.name}* (Qty: ${qty})${colorText}
-💰 *Price:* ₹${product.price * qty}${noteText}
-
-_Please confirm availability and delivery timeline!_`;
-
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    orderProductViaInstagram(product, selectedColor, customNote, qty);
+    showToast(`Order details copied! Opening Instagram DM with @little.gift.studio._ 🌸`);
   };
 
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
+
+  // If in Admin mode, render the Admin Portal full screen
+  if (currentPage === 'admin') {
+    return (
+      <div className="min-h-screen bg-stone-100 font-sans">
+        <AdminPortal onNavigateToStore={() => handleNavigate('shop')} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-cream text-stone-800 relative selection:bg-rosebud-200">
@@ -174,7 +191,7 @@ _Please confirm availability and delivery timeline!_`;
             products={products}
             onQuickView={(p) => setSelectedProduct(p)}
             onAddToCart={handleAddToCart}
-            onDirectWhatsApp={handleDirectWhatsApp}
+            onDirectInstagramOrder={handleDirectInstagramOrder}
           />
         )}
 
@@ -205,7 +222,7 @@ _Please confirm availability and delivery timeline!_`;
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onAddToCart={handleAddToCart}
-        onDirectWhatsApp={handleDirectWhatsApp}
+        onDirectInstagramOrder={handleDirectInstagramOrder}
       />
 
       {/* Slide-over Shopping Cart Drawer (Shared) */}

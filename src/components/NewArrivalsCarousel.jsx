@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Sparkles, ChevronLeft, ChevronRight, ArrowRight, ShoppingBag, Eye, Heart, MessageCircle } from 'lucide-react';
+import { Sparkles, ChevronLeft, ChevronRight, ArrowRight, ShoppingBag, Eye, Heart } from 'lucide-react';
+import { InstagramIcon } from './Icons';
 import { PRODUCTS } from '../data/products';
+import { orderProductViaInstagram } from '../lib/instagram';
 
 export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNavigate }) {
   const carouselRef = useRef(null);
@@ -39,11 +41,8 @@ export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNaviga
     });
   };
 
-  const handleWhatsAppOrder = (product) => {
-    const text = encodeURIComponent(
-      `Hi Little Gift Studio! 🌸 I would love to order the *${product.name}* (₹${product.price}). Could you please share customization details?`
-    );
-    window.open(`https://wa.me/918341648074?text=${text}`, '_blank');
+  const handleInstagramOrder = (product) => {
+    orderProductViaInstagram(product, '', '', 1);
   };
 
   return (
@@ -108,7 +107,8 @@ export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNaviga
           {newArrivals.map((product) => (
             <div
               key={product.id}
-              className="w-[260px] sm:w-[285px] shrink-0 snap-start bg-white rounded-3xl border border-rosebud-200/80 overflow-hidden hover:shadow-card-hover hover:border-rosebud-300 transition-all duration-300 flex flex-col group relative"
+              onClick={() => onQuickView?.(product)}
+              className="w-[260px] sm:w-[285px] shrink-0 snap-start bg-white rounded-3xl border border-rosebud-200/80 overflow-hidden hover:shadow-card-hover hover:border-rosebud-300 transition-all duration-300 flex flex-col group relative cursor-pointer select-none"
             >
               {/* Product Badge */}
               {product.badge && (
@@ -127,24 +127,6 @@ export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNaviga
                   className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-500"
                   loading="lazy"
                 />
-
-                {/* Quick actions hover overlay */}
-                <div className="absolute inset-0 bg-stone-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-3">
-                  <button
-                    onClick={() => onQuickView?.(product)}
-                    className="p-2.5 rounded-full bg-white text-stone-800 hover:bg-rosebud-50 shadow-md transform translate-y-2 group-hover:translate-y-0 transition-all"
-                    title="Quick View Details"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => onAddToCart?.(product)}
-                    className="p-2.5 rounded-full bg-rosebud-600 text-white hover:bg-rosebud-700 shadow-md transform translate-y-2 group-hover:translate-y-0 transition-all"
-                    title="Add to Hamper Cart"
-                  >
-                    <ShoppingBag className="w-4 h-4" />
-                  </button>
-                </div>
               </div>
 
               {/* Card Body */}
@@ -152,17 +134,14 @@ export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNaviga
                 <div>
                   <div className="flex items-center justify-between text-[11px] text-stone-500 mb-1">
                     <span className="font-semibold text-rosebud-700 uppercase tracking-wider text-[9px]">
-                      {product.categoryLabel}
+                      {product.categoryLabel || product.category}
                     </span>
                     <span className="text-amber-500 font-bold flex items-center gap-0.5 text-[11px]">
                       ★ {product.rating}
                     </span>
                   </div>
 
-                  <h3
-                    onClick={() => onQuickView?.(product)}
-                    className="font-serif text-base font-bold text-stone-900 hover:text-rosebud-700 transition-colors cursor-pointer line-clamp-1"
-                  >
+                  <h3 className="font-serif text-base font-bold text-stone-900 group-hover:text-rosebud-700 transition-colors line-clamp-1">
                     {product.name}
                   </h3>
 
@@ -191,7 +170,7 @@ export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNaviga
                   )}
                 </div>
 
-                {/* Price and Buttons */}
+                {/* Price and Action Indicator */}
                 <div className="pt-3 mt-3 border-t border-rosebud-100 flex items-center justify-between gap-2">
                   <div>
                     <div className="flex items-baseline gap-1.5">
@@ -207,22 +186,10 @@ export default function NewArrivalsCarousel({ onQuickView, onAddToCart, onNaviga
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => onAddToCart?.(product)}
-                      className="px-3 py-1.5 rounded-xl bg-rosebud-600 hover:bg-rosebud-700 text-white text-xs font-semibold flex items-center gap-1 transition-all shadow-xs hover:scale-105"
-                    >
-                      <ShoppingBag className="w-3.5 h-3.5" />
-                      <span>Add</span>
-                    </button>
-                    <button
-                      onClick={() => handleWhatsAppOrder(product)}
-                      className="p-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors"
-                      title="Order via WhatsApp"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rosebud-50 group-hover:bg-rosebud-600 text-rosebud-700 group-hover:text-white text-xs font-semibold transition-all shadow-2xs">
+                    <span>View & Order</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
                 </div>
 
               </div>

@@ -7,7 +7,7 @@ export default function ProductCatalog({
   products,
   onQuickView,
   onAddToCart,
-  onDirectWhatsApp,
+  onDirectInstagramOrder,
 }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,7 +20,7 @@ export default function ProductCatalog({
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase());
+        (product.categoryLabel && product.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
@@ -58,7 +58,7 @@ export default function ProductCatalog({
                   className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 shadow-sm ${
                     isActive
                       ? 'bg-studio-600 text-white shadow-craft scale-105'
-                      : 'bg-white text-stone-700 border border-stone-200/80 hover:bg-studio-50 hover:border-studio-200'
+                      : 'bg-white text-stone-700 hover:bg-studio-50 border border-stone-200/80'
                   }`}
                 >
                   {cat.label}
@@ -67,41 +67,50 @@ export default function ProductCatalog({
             })}
           </div>
 
-          {/* Search & Sort */}
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            {/* Search Input */}
-            <div className="relative flex-1 md:w-60">
-              <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          {/* Search and Sort controls */}
+          <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+            
+            {/* Search input */}
+            <div className="relative flex-1 md:w-64">
+              <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search gifts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-full bg-white border border-stone-200 text-xs sm:text-sm focus:outline-none focus:border-studio-500 focus:ring-2 focus:ring-studio-100 transition-all"
+                placeholder="Search bouquets, clips..."
+                className="w-full pl-10 pr-4 py-2 rounded-full border border-stone-200 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-studio-500 focus:border-transparent shadow-xs"
               />
             </div>
 
-            {/* Sort Selector */}
+            {/* Sort dropdown */}
             <div className="relative">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                aria-label="Sort products by"
-                className="appearance-none bg-white border border-stone-200 rounded-full px-3.5 py-2 pr-8 text-xs font-medium text-stone-700 focus:outline-none focus:border-studio-500 cursor-pointer shadow-sm"
+                className="appearance-none pl-3.5 pr-8 py-2 rounded-full border border-stone-200 bg-white text-xs sm:text-sm font-medium text-stone-700 focus:outline-none focus:ring-2 focus:ring-studio-500 shadow-xs cursor-pointer"
               >
-                <option value="featured">Featured</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Top Rated</option>
+                <option value="featured">✨ Featured</option>
+                <option value="price-low">💰 Price: Low to High</option>
+                <option value="price-high">💎 Price: High to Low</option>
+                <option value="rating">⭐ Customer Rating</option>
               </select>
               <SlidersHorizontal className="w-3.5 h-3.5 text-stone-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
+
           </div>
 
         </div>
 
         {/* Product Grid */}
-        {filteredProducts.length > 0 ? (
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8">
+            <Sparkles className="w-10 h-10 text-studio-400 mx-auto mb-3 animate-pulse" />
+            <h3 className="font-serif text-xl font-bold text-stone-800">No matching creations found</h3>
+            <p className="text-stone-500 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
+              Try searching with another keyword or pick a different category above.
+            </p>
+          </div>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
               <ProductCard
@@ -109,26 +118,9 @@ export default function ProductCatalog({
                 product={product}
                 onQuickView={onQuickView}
                 onAddToCart={onAddToCart}
-                onDirectWhatsApp={onDirectWhatsApp}
+                onDirectInstagramOrder={onDirectInstagramOrder}
               />
             ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 max-w-md mx-auto">
-            <div className="text-4xl mb-3">🔍</div>
-            <h3 className="font-serif text-lg font-bold text-stone-800">No matching creations found</h3>
-            <p className="text-xs text-stone-500 mt-1 mb-4">
-              Try searching for something else or reset the filter.
-            </p>
-            <button
-              onClick={() => {
-                setActiveCategory('all');
-                setSearchQuery('');
-              }}
-              className="px-4 py-2 bg-studio-600 text-white rounded-full text-xs font-semibold hover:bg-studio-700 transition-colors"
-            >
-              Reset Filters
-            </button>
           </div>
         )}
 

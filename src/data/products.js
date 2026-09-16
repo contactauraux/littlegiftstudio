@@ -270,7 +270,7 @@ export const REVIEWS = [
     rating: 5,
     date: '1 week ago',
     product: 'The "Forever Bloom" Deluxe Hamper',
-    text: 'Best anniversary gift ever. Direct WhatsApp communication was super smooth and they even customized the ribbon color to my girlfriend’s favorite lavender. Fast delivery and safe packing!',
+    text: 'Best anniversary gift ever. Direct Instagram DM communication was super smooth and they even customized the ribbon color to my girlfriend’s favorite lavender. Fast delivery and safe packing!',
     avatar: '💖'
   },
   {
@@ -302,7 +302,7 @@ export const FAQS = [
   },
   {
     question: 'How do I place a custom order or choose specific colors?',
-    answer: 'You can use our interactive "Build Your Bouquet" tool on this page, or simply click the "Order via WhatsApp" button. Message us with your desired flower types, favorite color theme, and budget—we will handcraft it specially for you!'
+    answer: 'You can use our interactive "Build Your Bouquet" tool on this page, or simply click the "Order via Instagram DM" button. Message us with your desired flower types, favorite color theme, and budget—we will handcraft it specially for you!'
   },
   {
     question: 'How much time does it take to make and deliver?',
@@ -310,7 +310,7 @@ export const FAQS = [
   },
   {
     question: 'Can I include a personal gift message or photo?',
-    answer: 'Yes, absolutely! Every bouquet and hamper includes a complimentary handwritten vintage aesthetic card. You can provide your custom message during WhatsApp checkout.'
+    answer: 'Yes, absolutely! Every bouquet and hamper includes a complimentary handwritten vintage aesthetic card. You can provide your custom message during Instagram DM checkout.'
   },
   {
     question: 'How do I care for and clean my pipe cleaner crafts?',

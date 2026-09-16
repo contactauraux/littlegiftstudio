@@ -1,43 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, ExternalLink, Play, Sparkles } from 'lucide-react';
 import { InstagramIcon } from './Icons';
-
-const INSTA_POSTS = [
-  {
-    id: 1,
-    url: 'https://www.instagram.com/p/DcbeRSYD2hX/?img_index=1',
-    img: '/media/insta-1.jpg',
-    likes: 70,
-    type: 'carousel',
-    caption: 'Abha abhaaa handmade collection 🔥 #bhadrachalam #rakhi #trending',
-  },
-  {
-    id: 2,
-    url: 'https://www.instagram.com/p/DcfKHkkT1Xs/',
-    img: '/media/insta-2.jpg',
-    likes: 821,
-    type: 'reel',
-    caption: 'Special gift hampers – ₹149 | ₹299 | ₹799 & Hair clips starting from ₹40! ✨❤️',
-  },
-  {
-    id: 3,
-    url: 'https://www.instagram.com/p/DceMzVgD6vN/?img_index=1',
-    img: '/media/insta-3.jpg',
-    likes: 62,
-    type: 'carousel',
-    caption: 'Another range of our handmade gift collection ✨🥰 #gifting #trending',
-  },
-  {
-    id: 4,
-    url: 'https://www.instagram.com/p/DceHO9IDwAo/?img_index=1',
-    img: '/media/Image-78971.jpg',
-    likes: 88,
-    type: 'carousel',
-    caption: 'Handcrafted floral treasures & bespoke gift sets 🌸✨ #littlegiftstudio #handmade',
-  },
-];
+import { getStoredInstagramPosts } from '../lib/instagramStore';
 
 export default function InstagramFeed() {
+  const [posts, setPosts] = useState(() => getStoredInstagramPosts());
+
+  useEffect(() => {
+    const handleUpdated = (e) => {
+      if (e.detail) {
+        setPosts(e.detail);
+      } else {
+        setPosts(getStoredInstagramPosts());
+      }
+    };
+
+    window.addEventListener('lgs_instagram_posts_updated', handleUpdated);
+    return () => window.removeEventListener('lgs_instagram_posts_updated', handleUpdated);
+  }, []);
   return (
     <section className="py-14 sm:py-16 bg-white/70 border-t border-rosebud-100/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -69,9 +49,9 @@ export default function InstagramFeed() {
           </a>
         </div>
 
-        {/* Instagram 4-Post Grid with Exact Thumbnails */}
+        {/* Instagram Post Grid with Dynamic Thumbnails */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {INSTA_POSTS.map((post) => (
+          {posts.map((post) => (
             <a
               key={post.id}
               href={post.url}

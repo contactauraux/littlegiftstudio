@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { X, Trash2, Plus, Minus, MessageCircle, ShoppingBag, Sparkles, Heart, Gift } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, Sparkles, Heart, Gift, CheckCircle2 } from 'lucide-react';
+import { InstagramIcon } from './Icons';
+import { orderCartViaInstagram } from '../lib/instagram';
 
 export default function CartDrawer({
   isOpen,
@@ -13,35 +15,16 @@ export default function CartDrawer({
 
   const [deliveryPincode, setDeliveryPincode] = useState('');
   const [globalGiftNote, setGlobalGiftNote] = useState('');
+  const [copiedToast, setCopiedToast] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handleCheckoutWhatsApp = () => {
+  const handleCheckoutInstagram = () => {
     if (items.length === 0) return;
 
-    const itemsSummary = items
-      .map(
-        (item, index) =>
-          `${index + 1}. *${item.name}* (x${item.quantity}) - ₹${item.price * item.quantity}${
-            item.selectedColor ? `\n   ↳ Color Theme: ${item.selectedColor}` : ''
-          }${item.customNote ? `\n   ↳ Note: "${item.customNote}"` : ''}`
-      )
-      .join('\n\n');
-
-    const message = `🌸 *New Order Inquiry from Little Gift Studio Website!*
-
-🛍️ *Order Items:*
-${itemsSummary}
-
----------------------------
-💰 *Total Amount:* ₹${subtotal}
-📦 *Delivery Pincode:* ${deliveryPincode ? deliveryPincode : 'Not specified'}
-💌 *Card Message:* ${globalGiftNote ? `"${globalGiftNote}"` : 'Default complimentary aesthetic tag'}
-
-_Please let me know the payment details (UPI/GPay) and estimated shipping timeline!_`;
-
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    orderCartViaInstagram(items, subtotal, deliveryPincode, globalGiftNote);
+    setCopiedToast(true);
+    setTimeout(() => setCopiedToast(false), 4500);
   };
 
   return (
@@ -69,6 +52,16 @@ _Please let me know the payment details (UPI/GPay) and estimated shipping timeli
 
           {/* Cart Item List */}
           <div className="p-5 overflow-y-auto flex-1 space-y-4">
+            
+            {copiedToast && (
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 text-pink-900 text-xs flex items-center gap-2.5 animate-fadeIn shadow-xs">
+                <CheckCircle2 className="w-4 h-4 text-pink-600 shrink-0" />
+                <span>
+                  Hamper details copied! Opening Instagram DM with <strong>@little.gift.studio._</strong>. Simply paste (Ctrl+V) to send!
+                </span>
+              </div>
+            )}
+
             {items.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-16 h-16 rounded-full bg-studio-50 flex items-center justify-center mx-auto mb-3 text-3xl">
@@ -139,24 +132,24 @@ _Please let me know the payment details (UPI/GPay) and estimated shipping timeli
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
+
+                      {/* Delete button */}
+                      <button
+                        onClick={() => onRemoveItem(item.id, item.selectedColor)}
+                        className="text-stone-400 hover:text-red-500 transition-colors p-1"
+                        title="Remove"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
-
-                  {/* Remove item */}
-                  <button
-                    onClick={() => onRemoveItem(item.id, item.selectedColor)}
-                    className="text-stone-300 hover:text-rose-500 transition-colors self-start p-1"
-                    title="Remove item"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
                 </div>
               ))
             )}
 
-            {/* Global Note & Pincode when items exist */}
+            {/* Extra order options */}
             {items.length > 0 && (
-              <div className="space-y-3 pt-3 border-t border-stone-100">
+              <div className="pt-3 border-t border-stone-100 space-y-3">
                 <div>
                   <label className="text-xs font-bold text-stone-800 block mb-1">
                     📍 Delivery Pincode / City:
@@ -186,7 +179,7 @@ _Please let me know the payment details (UPI/GPay) and estimated shipping timeli
             )}
           </div>
 
-          {/* Footer & WhatsApp Checkout */}
+          {/* Footer & Instagram Checkout */}
           {items.length > 0 && (
             <div className="p-5 border-t border-stone-100 bg-cream space-y-3">
               <div className="space-y-1.5 text-xs text-stone-600">
@@ -194,7 +187,7 @@ _Please let me know the payment details (UPI/GPay) and estimated shipping timeli
                   <span>Items Subtotal</span>
                   <span className="font-semibold text-stone-900">₹{subtotal}</span>
                 </div>
-                <div className="flex justify-between text-emerald-700">
+                <div className="flex justify-between text-pink-700">
                   <span>Complimentary Gift Box & Card</span>
                   <span className="font-semibold">FREE</span>
                 </div>
@@ -205,15 +198,15 @@ _Please let me know the payment details (UPI/GPay) and estimated shipping timeli
               </div>
 
               <button
-                onClick={handleCheckoutWhatsApp}
-                className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md flex items-center justify-center gap-2 transition-all"
+                onClick={handleCheckoutInstagram}
+                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md flex items-center justify-center gap-2 transition-all transform hover:scale-101"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>Complete Order on WhatsApp</span>
+                <InstagramIcon className="w-4 h-4 text-white" />
+                <span>Complete Order on Instagram DM</span>
               </button>
 
               <p className="text-center text-[10px] text-stone-400">
-                You will review and confirm all colors & addresses directly with the artist before payment.
+                You will review and confirm all colors & addresses directly with our maker on Instagram DM before payment.
               </p>
             </div>
           )}

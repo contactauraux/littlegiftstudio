@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, Check, MessageCircle, RefreshCcw, Plus, Gift, Palette, Heart } from 'lucide-react';
+import { Sparkles, Check, RefreshCcw, Plus, Gift, Palette, Heart } from 'lucide-react';
+import { InstagramIcon } from './Icons';
+import { orderCustomBouquetViaInstagram } from '../lib/instagram';
 
 const FLOWER_OPTIONS = [
   { id: 'tulips', name: 'Pastel Tulips (3 Stems)', price: 349, icon: '🌷', desc: 'Graceful folded petals' },
@@ -74,7 +76,7 @@ export default function Customizer({ onAddToCart }) {
   const getThemeName = () => COLOR_THEMES.find((t) => t.id === selectedTheme)?.name || 'Custom';
   const getWrapName = () => WRAP_OPTIONS.find((w) => w.id === selectedWrap)?.name || 'Korean Matte';
 
-  const handleWhatsAppOrder = () => {
+  const handleInstagramOrder = () => {
     const flowerNames = selectedFlowers
       .map((fid) => FLOWER_OPTIONS.find((f) => f.id === fid)?.name)
       .join(', ');
@@ -82,20 +84,14 @@ export default function Customizer({ onAddToCart }) {
       ? selectedAddons.map((aid) => ADDONS.find((a) => a.id === aid)?.name).join(', ')
       : 'None';
 
-    const message = `🌸 *New Custom Bouquet Request from Little Gift Studio Website!*
-
-💐 *Flower Elements:* ${flowerNames}
-🎨 *Color Theme:* ${getThemeName()}
-🎀 *Wrapping Style:* ${getWrapName()}
-✨ *Add-ons:* ${addonNames}
-💌 *Gift Note:* "${recipientNote}"
-
-💰 *Estimated Price:* ₹${totalPrice}
-
-_Please confirm availability, custom color details, and delivery date!_`;
-
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    orderCustomBouquetViaInstagram({
+      flowerNames,
+      themeName: getThemeName(),
+      wrapName: getWrapName(),
+      addonNames,
+      recipientNote,
+      totalPrice,
+    });
   };
 
   const handleAddCustomToCart = () => {
@@ -133,7 +129,7 @@ _Please confirm availability, custom color details, and delivery date!_`;
             Build Your Own Custom Bouquet / Hamper
           </h2>
           <p className="text-stone-600 text-sm sm:text-base mt-2">
-            Mix and match flower stems, select your favorite pastel color palette, add cute clips or fairy lights, and order directly on WhatsApp with 1-click.
+            Mix and match flower stems, select your favorite pastel color palette, add cute clips or fairy lights, and order directly on Instagram DM with 1-click.
           </p>
         </div>
 
@@ -298,35 +294,31 @@ _Please confirm availability, custom color details, and delivery date!_`;
 
           </div>
 
-          {/* Live Order Summary & Action Card (Right 5 cols) */}
-          <div className="lg:col-span-5 sticky top-24">
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-studio-200 shadow-soft relative overflow-hidden">
+          {/* Right: Live Custom Creation Summary (5 cols) */}
+          <div className="lg:col-span-5 sticky top-28 sm:top-32">
+            <div className="bg-white p-6 sm:p-7 rounded-3xl border border-stone-200 shadow-soft space-y-5">
               
-              {/* Header Badge */}
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100">
-                <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-studio-600">
-                    Live Customizer Summary
-                  </span>
-                  <h3 className="font-serif text-xl font-bold text-stone-900">Your Dream Creation</h3>
+              <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-studio-600" />
+                  <h3 className="font-serif text-lg font-bold text-stone-900">Your Custom Bouquet</h3>
                 </div>
-                <div className="w-10 h-10 rounded-2xl bg-studio-100 flex items-center justify-center text-xl">
-                  🎁
-                </div>
+                <span className="px-2.5 py-0.5 rounded-full bg-rosebud-100 text-rosebud-800 text-[10px] font-bold">
+                  Handcrafted
+                </span>
               </div>
 
-              {/* Items Breakdown */}
-              <div className="py-4 space-y-3 text-xs sm:text-sm">
+              {/* Visual Breakdown */}
+              <div className="space-y-3 text-xs">
                 
                 <div>
-                  <span className="text-stone-400 font-medium block text-[11px]">Selected Stems:</span>
+                  <span className="text-stone-400 font-semibold block text-[11px] uppercase tracking-wider">Flower Stems:</span>
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {selectedFlowers.map((fid) => {
-                      const f = FLOWER_OPTIONS.find((x) => x.id === fid);
+                      const item = FLOWER_OPTIONS.find((f) => f.id === fid);
                       return (
-                        <span key={fid} className="px-2.5 py-1 rounded-md bg-stone-100 text-stone-800 font-medium text-xs flex items-center gap-1">
-                          <span>{f?.icon}</span>
-                          <span>{f?.name}</span>
+                        <span key={fid} className="px-2.5 py-1 rounded-lg bg-studio-50 text-studio-800 font-medium">
+                          {item?.icon} {item?.name}
                         </span>
                       );
                     })}
@@ -335,24 +327,24 @@ _Please confirm availability, custom color details, and delivery date!_`;
 
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-100">
                   <div>
-                    <span className="text-stone-400 font-medium block text-[11px]">Color Palette:</span>
-                    <span className="font-semibold text-stone-800 text-xs mt-0.5 block">{getThemeName()}</span>
+                    <span className="text-stone-400 font-semibold block text-[11px] uppercase tracking-wider">Color Theme:</span>
+                    <span className="font-bold text-stone-800 mt-0.5 block">{getThemeName()}</span>
                   </div>
                   <div>
-                    <span className="text-stone-400 font-medium block text-[11px]">Wrapping:</span>
-                    <span className="font-semibold text-stone-800 text-xs mt-0.5 block">{getWrapName()}</span>
+                    <span className="text-stone-400 font-semibold block text-[11px] uppercase tracking-wider">Wrapping Paper:</span>
+                    <span className="font-bold text-stone-800 mt-0.5 block">{getWrapName()}</span>
                   </div>
                 </div>
 
                 {selectedAddons.length > 0 && (
                   <div className="pt-2 border-t border-stone-100">
-                    <span className="text-stone-400 font-medium block text-[11px]">Add-ons:</span>
+                    <span className="text-stone-400 font-semibold block text-[11px] uppercase tracking-wider">Included Add-ons:</span>
                     <div className="flex flex-wrap gap-1.5 mt-1">
                       {selectedAddons.map((aid) => {
-                        const a = ADDONS.find((x) => x.id === aid);
+                        const item = ADDONS.find((a) => a.id === aid);
                         return (
-                          <span key={aid} className="px-2 py-0.5 rounded bg-rosebud-50 text-rosebud-800 text-xs font-medium">
-                            {a?.icon} {a?.name}
+                          <span key={aid} className="px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 text-[11px]">
+                            {item?.icon} {item?.name}
                           </span>
                         );
                       })}
@@ -369,13 +361,12 @@ _Please confirm availability, custom color details, and delivery date!_`;
 
               </div>
 
-              {/* Price Calculation Total */}
               <div className="pt-4 border-t border-stone-200 flex items-baseline justify-between">
                 <div>
                   <span className="text-xs text-stone-500 font-medium block">Total Estimate:</span>
                   <span className="text-2xl font-bold text-stone-900">₹{totalPrice}</span>
                 </div>
-                <span className="text-[11px] text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full font-semibold border border-emerald-200">
+                <span className="text-[11px] text-pink-700 bg-pink-50 px-2.5 py-1 rounded-full font-semibold border border-pink-200">
                   Ready in 2-3 Days
                 </span>
               </div>
@@ -383,11 +374,11 @@ _Please confirm availability, custom color details, and delivery date!_`;
               {/* Action Buttons */}
               <div className="mt-5 space-y-2.5">
                 <button
-                  onClick={handleWhatsAppOrder}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md flex items-center justify-center gap-2 transition-all"
+                  onClick={handleInstagramOrder}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md flex items-center justify-center gap-2 transition-all transform hover:scale-101"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  Order Custom Set on WhatsApp
+                  <InstagramIcon className="w-4 h-4 text-white" />
+                  <span>Order Custom Set on Instagram DM</span>
                 </button>
 
                 <button
@@ -395,12 +386,12 @@ _Please confirm availability, custom color details, and delivery date!_`;
                   className="w-full py-3 px-4 rounded-2xl bg-studio-600 hover:bg-studio-700 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Custom Creation to Cart
+                  <span>Add Custom Creation to Cart</span>
                 </button>
               </div>
 
               <p className="text-center text-[11px] text-stone-400 mt-3">
-                No advance payment needed to discuss • Direct maker chat
+                No advance payment needed to discuss • Direct maker Instagram chat
               </p>
 
             </div>

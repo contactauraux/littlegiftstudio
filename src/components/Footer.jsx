@@ -45,19 +45,11 @@ export default function Footer({ onNavigate }) {
                 href="https://instagram.com/little.gift.studio._"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-stone-900 hover:bg-stone-800 flex items-center justify-center text-pink-400 transition-colors"
+                className="px-3.5 py-1.5 rounded-full bg-stone-900 hover:bg-stone-800 flex items-center gap-2 text-pink-400 text-xs font-semibold transition-colors border border-stone-800"
                 aria-label="Instagram @little.gift.studio._"
               >
-                <InstagramIcon className="w-4 h-4" />
-              </a>
-              <a
-                href="https://wa.me/?text=Hi%20Little%20Gift%20Studio!"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-stone-900 hover:bg-stone-800 flex items-center justify-center text-emerald-400 transition-colors"
-                aria-label="WhatsApp"
-              >
-                <MessageCircle className="w-4 h-4" />
+                <InstagramIcon className="w-4 h-4 text-pink-400" />
+                <span>@little.gift.studio._</span>
               </a>
             </div>
           </div>
@@ -108,6 +100,15 @@ export default function Footer({ onNavigate }) {
                   FAQs & Help
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => handleNav('admin')}
+                  className="hover:text-studio-400 transition-colors text-left flex items-center gap-1.5 text-stone-400 hover:text-white"
+                >
+                  <span>🔐</span>
+                  <span>Owner / Admin Portal</span>
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -132,19 +133,19 @@ export default function Footer({ onNavigate }) {
             </h4>
             <div className="space-y-2.5 text-xs text-stone-400">
               <p className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>WhatsApp: Instant DM Order</span>
-              </p>
-              <p className="flex items-center gap-2">
                 <InstagramIcon className="w-4 h-4 text-pink-400 shrink-0" />
                 <a
-                  href="https://instagram.com/little.gift.studio._"
+                  href="https://ig.me/m/little.gift.studio._"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-pink-400 transition-colors font-medium text-stone-300"
                 >
-                  Instagram: @little.gift.studio._
+                  Instagram DM: @little.gift.studio._
                 </a>
+              </p>
+              <p className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Instant 1-Click DM Ordering</span>
               </p>
               <p className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-studio-400 shrink-0" />
@@ -157,7 +158,16 @@ export default function Footer({ onNavigate }) {
 
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
-          <p>© {new Date().getFullYear()} Little Gift Studio. All rights reserved.</p>
+          <div className="flex items-center gap-3">
+            <p>© {new Date().getFullYear()} Little Gift Studio. All rights reserved.</p>
+            <span>•</span>
+            <button
+              onClick={() => handleNav('admin')}
+              className="text-stone-500 hover:text-studio-400 underline underline-offset-2 transition-colors"
+            >
+              Admin Login
+            </button>
+          </div>
           <p className="flex items-center gap-1 font-cursive text-sm text-stone-400">
             Crafted with <Heart className="w-3.5 h-3.5 fill-rosebud-500 text-rosebud-500 inline" /> for thoughtful gift-givers.
           </p>

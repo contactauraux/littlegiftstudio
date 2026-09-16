@@ -1,5 +1,8 @@
-import React from 'react';
-import { HelpCircle, Sparkles, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { HelpCircle, Sparkles } from 'lucide-react';
+import { InstagramIcon } from './Icons';
+import { openInstagramDM } from '../lib/instagram';
+import { getStoredFaqs } from '../lib/contentStore';
 
 /**
  * FaqCard
@@ -29,7 +32,6 @@ export const HorizontalScroller = ({ children, speed = '40s', direction = 'left'
   const animationClass =
     direction === 'right' ? 'animate-scroll-horizontal-reverse' : 'animate-scroll-horizontal';
 
-  // Inline style to set the CSS custom property for scroll duration.
   const style = { '--scroll-duration': speed };
 
   return (
@@ -47,80 +49,27 @@ export const HorizontalScroller = ({ children, speed = '40s', direction = 'left'
   );
 };
 
-const DEFAULT_FAQ_DATA = {
-  mainTitle: 'Frequently Asked Questions',
-  mainSubtitle: 'Everything you need to know about our handmade pipe cleaner bouquets, customization, and deliveries.',
-  rows: [
-    {
-      id: 'row-1',
-      speed: '38s',
-      direction: 'left',
-      faqItems: [
-        {
-          id: 'faq-1',
-          icon: '🌷',
-          question: 'How long do pipe cleaner flowers last?',
-          answer: 'Forever! Unlike fresh flowers that wilt in 3-5 days, our handmade blooms are crafted from high-density chenille wire that keeps its shape, color, and plush texture for years.',
-        },
-        {
-          id: 'faq-2',
-          icon: '🎨',
-          question: 'Can I pick custom colors or flower types?',
-          answer: 'Yes, absolutely! You can use our interactive "Build Custom Bouquet" page or message us on WhatsApp to choose your dream color palette, wrapping paper, and flower stems.',
-        },
-        {
-          id: 'faq-3',
-          icon: '⏳',
-          question: 'How much time does it take to make and deliver?',
-          answer: 'Every piece is 100% handcrafted in small batches. Orders are lovingly crafted in 2–3 days and delivered within 2–5 days depending on your city/pincode.',
-        },
-        {
-          id: 'faq-4',
-          icon: '📦',
-          question: 'Do you deliver pan-India safely?',
-          answer: 'Yes! We ship across India. All bouquets and hampers are packaged in heavy-duty crush-proof rigid boxes with protective cushioning to ensure they arrive in perfect shape.',
-        },
-      ],
-    },
-    {
-      id: 'row-2',
-      speed: '44s',
-      direction: 'right',
-      faqItems: [
-        {
-          id: 'faq-5',
-          icon: '💌',
-          question: 'Can I include a personal handwritten message?',
-          answer: 'Yes! Every bouquet and hamper includes a complimentary handwritten vintage calligraphy gift card. You can write your custom message during checkout.',
-        },
-        {
-          id: 'faq-6',
-          icon: '✨',
-          question: 'How do I clean and care for the flowers?',
-          answer: 'Keep them in a dry indoor space away from direct moisture. To remove any dust over time, gently dust with a soft dry brush or blow with a hairdryer on cool/low.',
-        },
-        {
-          id: 'faq-7',
-          icon: '🎀',
-          question: 'Can I order bulk hampers for events & return gifts?',
-          answer: 'Yes! We accept bulk hamper orders for birthdays, anniversaries, corporate events, and wedding return gifts with special discounted bundle pricing.',
-        },
-        {
-          id: 'faq-8',
-          icon: '💖',
-          question: 'What is the payment and ordering process?',
-          answer: 'You can build your order on the website and submit directly to our WhatsApp where you can review color photos, delivery timelines, and pay via UPI/GPay.',
-        },
-      ],
-    },
-  ],
-};
+export const FAQ = () => {
+  const [faqs, setFaqs] = useState(() => getStoredFaqs());
 
-/**
- * FaqSection
- * Assembles title, subtitle, and multiple horizontal scrolling rows.
- */
-export const FAQ = ({ data = DEFAULT_FAQ_DATA }) => {
+  useEffect(() => {
+    const handleFaqsUpdated = (e) => {
+      if (e.detail) {
+        setFaqs(e.detail);
+      } else {
+        setFaqs(getStoredFaqs());
+      }
+    };
+
+    window.addEventListener('lgs_faqs_updated', handleFaqsUpdated);
+    return () => window.removeEventListener('lgs_faqs_updated', handleFaqsUpdated);
+  }, []);
+
+  // Split into two balanced horizontal rows
+  const mid = Math.ceil(faqs.length / 2);
+  const row1 = faqs.slice(0, mid);
+  const row2 = faqs.slice(mid);
+
   return (
     <section id="faqs" className="relative flex flex-col items-center gap-10 py-16 w-full max-w-7xl mx-auto overflow-hidden">
       
@@ -132,38 +81,44 @@ export const FAQ = ({ data = DEFAULT_FAQ_DATA }) => {
         </div>
 
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900 tracking-tight leading-tight">
-          {data.mainTitle}
+          Frequently Asked Questions
         </h2>
         
         <p className="text-stone-600 text-xs sm:text-base leading-relaxed max-w-xl">
-          {data.mainSubtitle}
+          Everything you need to know about our handmade pipe cleaner bouquets, customization, and deliveries.
         </p>
       </div>
 
       {/* Horizontal Multi-Row Scroller */}
       <div className="flex flex-col gap-6 z-10 w-full">
-        {data.rows.map((row) => (
-          <HorizontalScroller key={row.id} speed={row.speed} direction={row.direction}>
-            {row.faqItems.map((item) => (
+        {row1.length > 0 && (
+          <HorizontalScroller speed="38s" direction="left">
+            {row1.map((item) => (
               <FaqCard key={item.id} icon={item.icon} question={item.question} answer={item.answer} />
             ))}
           </HorizontalScroller>
-        ))}
+        )}
+
+        {row2.length > 0 && (
+          <HorizontalScroller speed="44s" direction="right">
+            {row2.map((item) => (
+              <FaqCard key={item.id} icon={item.icon} question={item.question} answer={item.answer} />
+            ))}
+          </HorizontalScroller>
+        )}
       </div>
 
-      {/* Direct WhatsApp Prompt */}
+      {/* Direct Instagram Prompt */}
       <div className="text-center z-10 pt-2">
         <p className="text-xs text-stone-500 flex items-center justify-center gap-2">
           <span>Still have questions?</span>
-          <a
-            href="https://wa.me/?text=Hi%20Little%20Gift%20Studio!%20I%20have%20a%20question%20%F0%9F%8C%B8"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-emerald-700 font-bold hover:underline flex items-center gap-1"
+          <button
+            onClick={() => openInstagramDM('Hi Little Gift Studio! 🌸 I have a question about custom handmade gifts.')}
+            className="text-pink-700 font-bold hover:underline flex items-center gap-1 cursor-pointer"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-            Chat directly with us on WhatsApp
-          </a>
+            <InstagramIcon className="w-3.5 h-3.5 text-pink-600" />
+            Chat directly with us on Instagram DM
+          </button>
         </p>
       </div>
 

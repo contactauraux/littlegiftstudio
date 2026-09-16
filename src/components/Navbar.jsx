@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, MessageCircle, Menu, X, Sparkles, Heart } from 'lucide-react';
+import { ShoppingBag, Menu, X, Sparkles, Heart } from 'lucide-react';
+import { InstagramIcon } from './Icons';
+import { openInstagramDM } from '../lib/instagram';
 
 export default function Navbar({ cartCount, onOpenCart, currentPage = 'home', onNavigate }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -178,21 +180,19 @@ export default function Navbar({ cartCount, onOpenCart, currentPage = 'home', on
           {/* ACTION BUTTONS & SHOPPING CART */}
           <div className="flex items-center gap-2 sm:gap-3">
             
-            {/* Direct WhatsApp Order CTA */}
-            <a
-              href="https://wa.me/?text=Hi%20Little%20Gift%20Studio!%20I%20would%20love%20to%20inquire%20about%20ordering%20a%20handmade%20gift%20%F0%9F%8C%B8"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 backdrop-blur-sm text-xs font-semibold shadow-sm hover:scale-105 transition-all duration-200"
+            {/* Direct Instagram Order CTA */}
+            <button
+              onClick={() => openInstagramDM('Hi Little Gift Studio! 🌸 I would love to inquire about ordering a handmade bouquet / gift.')}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-pink-50/80 hover:bg-pink-100 text-pink-900 border border-pink-200 backdrop-blur-sm text-xs font-semibold shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-600 fill-emerald-100" />
-              <span>WhatsApp Order</span>
-            </a>
+              <InstagramIcon className="w-3.5 h-3.5 text-pink-600" />
+              <span>Instagram DM</span>
+            </button>
 
             {/* Shopping Cart Trigger */}
             <button
               onClick={onOpenCart}
-              className="relative p-2.5 rounded-full bg-white/80 hover:bg-rosebud-100/80 text-[#3B1E19] border border-white/90 transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 group/cart"
+              className="relative p-2.5 rounded-full bg-white/80 hover:bg-rosebud-100/80 text-[#3B1E19] border border-white/90 transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 group/cart cursor-pointer"
               aria-label="View Shopping Cart"
             >
               <ShoppingBag className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#3B1E19] group-hover/cart:text-[#c75b45] transition-colors" />
@@ -238,15 +238,16 @@ export default function Navbar({ cartCount, onOpenCart, currentPage = 'home', on
             })}
 
             <div className="pt-3 border-t border-rosebud-100 flex flex-col gap-2">
-              <a
-                href="https://wa.me/?text=Hi%20Little%20Gift%20Studio!%20I%20would%20love%20to%20inquire%20about%20ordering%20a%20handmade%20gift%20%F0%9F%8C%B8"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full bg-emerald-600 text-white text-xs font-bold shadow-md hover:bg-emerald-700 transition-all"
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openInstagramDM('Hi Little Gift Studio! 🌸 I would love to inquire about ordering a handmade bouquet / gift.');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-rosebud-600 text-white text-xs font-bold shadow-md hover:opacity-95 transition-all cursor-pointer"
               >
-                <MessageCircle className="w-4 h-4" />
-                Chat / Order on WhatsApp
-              </a>
+                <InstagramIcon className="w-4 h-4" />
+                <span>Chat / Order on Instagram DM</span>
+              </button>
             </div>
           </div>
         </div>
