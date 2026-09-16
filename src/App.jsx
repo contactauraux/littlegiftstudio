@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import ProductModal from './components/ProductModal';
 import CartDrawer from './components/CartDrawer';
 import Toast from './components/Toast';
+import InstallPwaPrompt from './components/InstallPwaPrompt';
 import { MessageCircle } from 'lucide-react';
 
 // Pages
@@ -259,6 +260,9 @@ export default function App() {
 
       {/* Notification Toast */}
       <Toast message={toast.message} show={toast.show} />
+
+      {/* PWA App Install Prompt for Chrome & Mobile */}
+      <InstallPwaPrompt />
 
     </div>
   );

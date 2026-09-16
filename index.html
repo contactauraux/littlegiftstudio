@@ -3,8 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- PWA Web App Manifest & Meta Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#be185d" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Little Gift Studio" />
+    <meta name="application-name" content="Little Gift Studio" />
+    
     <title>Little Gift Studio | Handcrafted Everlasting Bouquets & Curated Hampers</title>
     <meta name="description" content="Thoughtfully handcrafted pipe cleaner flower bouquets, cute hair clips, personalized keychains, and aesthetic gift hampers that never wilt." />
     
@@ -16,5 +26,14 @@
   <body class="bg-cream text-stone-800 font-sans selection:bg-rosebud-200 selection:text-stone-900 antialiased overflow-x-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('PWA Service Worker registered:', reg.scope))
+            .catch((err) => console.log('Service Worker registration failed:', err));
+        });
+      }
+    </script>
   </body>
 </html>
