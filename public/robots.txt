@@ -1,0 +1,11 @@
+﻿# Robots.txt for Little Gift Studio
+User-agent: *
+Allow: /
+Allow: /#shop
+Allow: /#custom
+Allow: /#reviews
+Allow: /#faqs
+Allow: /#contact
+Disallow: /#admin
+
+Sitemap: https://littlegiftstudio.com/sitemap.xml
